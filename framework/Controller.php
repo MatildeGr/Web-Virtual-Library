@@ -1,5 +1,5 @@
 <?php
-
+require_once 'controller/controllerbis.php';
 require_once 'Configuration.php';
 
 abstract class Controller {

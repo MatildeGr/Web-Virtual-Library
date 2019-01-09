@@ -27,10 +27,7 @@
                 </table>
                 <input type="submit" value="Log In">
             </form>
-            <?php
-            if (isset($error))
-                echo "<div class='errors'><br><br>$error</div>";
-            ?>
+            <?php include('insert_errors.php'); ?>
         </div>
     </body>
 </html>

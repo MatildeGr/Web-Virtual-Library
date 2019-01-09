@@ -44,17 +44,7 @@
                 </table>
                 <input type="submit" value="Sign Up">
             </form>
-            <?php 
-                if(isset($errors)){
-                    echo "<div class='errors'>
-                          <p>Please correct the following error(s) :</p>
-                          <ul>";
-                    foreach($errors as $error){
-                        echo "<li>".$error."</li>";
-                    }
-                    echo '</ul></div>';
-                } 
-            ?>
+                <?php include('insert_errors.php'); ?>
         </div>
     </body>
 </html>
