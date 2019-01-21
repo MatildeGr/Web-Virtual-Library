@@ -13,7 +13,7 @@ class ControllerMain extends ControllerBis {
         $username = '';
         $password = '';
         $errors = [];
-        if (isset($_POST['username']) && isset($_POST['password'])) {
+        if (ToolsBis::check_fields(['username', 'password'])) {
             $username = trim($_POST['username']);
             $password = trim($_POST['password']);
             $errors = User::validate_login($username, $password);
@@ -23,7 +23,7 @@ class ControllerMain extends ControllerBis {
         }
         (new View("login"))->show(array("username" => $username, "password" => $password, "errors" => $errors));
     }
-    
+
     public function signup() {
         $username = '';
         $password = '';
@@ -33,8 +33,7 @@ class ControllerMain extends ControllerBis {
         $birthdate = '';
         $errors = [];
 
-        if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['password_confirm']) && isset($_POST['fullname']) && isset($_POST['email']) && isset($_POST['birthdate'])) {
-
+        if (ToolsBis::check_fields(['username', 'password', 'password_confirm', 'fullname', 'email', 'birthdate'])) {
             $username = trim($_POST['username']);
             $fullname = trim($_POST['fullname']);
             $password = trim($_POST['password']);
@@ -56,10 +55,9 @@ class ControllerMain extends ControllerBis {
 
 
             if (count($errors) == 0) {
-                $user->update(); 
+                $user->update();
                 Controller::log_user($user);
             }
-
         }
         (new View("signup"))->show(array("username" => $username, "password" => $password,
             "password_confirm" => $confirm_password, "fullname" => $fullname, "email" => $email,

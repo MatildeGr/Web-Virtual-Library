@@ -12,7 +12,8 @@ class User extends Model {
     public $birthdate;
     public $role;
 
-    public function __construct($fullname, $username, $hashed_password, $email, $role, $birthdate) {
+    public function __construct($fullname, $username, $hashed_password, $email, $role, $birthdate, $id = null) {
+        $this->id = $id;
         $this->fullname = $fullname;
         $this->username = $username;
         $this->hashed_password = $hashed_password;
@@ -49,7 +50,7 @@ class User extends Model {
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"]);
+            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"],$data["id"]);
         }
     }
 
@@ -58,7 +59,7 @@ class User extends Model {
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
-            $results[] = new User($row["fullname"], $row["username"], $row["password"], $row["email"], $row["role"], $row["birthdate"]);
+            $results[] = new User($row["fullname"], $row["username"], $row["password"], $row["email"], $row["role"], $row["birthdate"],$row["id"]);
         }
         return $results;
     }

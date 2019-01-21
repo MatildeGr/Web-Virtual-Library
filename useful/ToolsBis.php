@@ -16,4 +16,11 @@ class ToolsBis extends Tools {
         return true;
     }
 
+    // Formatte une date, donnée dans le format YYYY-MM-DD, au format d'affichage DD/MM/YYYY
+    public static function format_date($date) {
+        return $date === null ? '' : (new DateTime($date))->format('d/m/Y');
+    }
+    
+    
+
 }

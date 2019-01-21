@@ -25,7 +25,7 @@ class ControllerUser extends ControllerBis {
             $user = User::get_user_by_username($_GET["param1"]);
         }
 
-        (new View("profile"))->show(array("member" => $user, "menu" => $menu));
+        (new View("profile"))->show(array("username" => $user, "menu" => $menu));
     }
 
     public function user_lst() {
@@ -35,7 +35,7 @@ class ControllerUser extends ControllerBis {
         }
         $all_users = User::get_user();
 
-        (new View("user_lst"))->show(array("member" => $user, "all_users" => $all_users));
+        (new View("users"))->show(array("user" => $user, "users" => $all_users));
     }
 
     public function delete() {
@@ -66,6 +66,40 @@ class ControllerUser extends ControllerBis {
             }
         }
         (new View("delete"))->show(array("user" => $user, "user_del" => $user_del, "errors" => $errors));
+    }
+
+    
+    public function add_edit_user() {
+        if (ToolsBis::check_fields(['id'], $_GET)) {
+            $is_new = false;
+            $id = sanitize($_GET['id']);
+            $usr = get_user($id);
+            if (!$usr) {
+                abort('Unknown user');
+            }
+            $username = $usr['username'];
+            $fullname = $usr['fullname'];
+            $email = $usr['email'];
+            $birthdate = $usr['birthdate'];
+            $role = $usr['role'];
+            $password = $usr['password'];
+        } else {
+            $is_new = true;
+            $id = null;
+            $username = '';
+            $fullname = '';
+            $email = '';
+            $birthdate = null;
+            $role = 'member';
+            $password='';
+        }
+
+        if (ToolsBis::check_fields(['cancel'])) {
+            redirect('users.php');
+        }
+        $errors=[];
+        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname, "password" => $password,
+            "email" => $email, "birthdate" => $birthdate, "role" => $role,"is_new"=>$is_new, "errors" => $errors));
     }
 
     public function user_add() {
@@ -110,12 +144,10 @@ class ControllerUser extends ControllerBis {
             }
         }
 
-        (new View("user_add"))->show(array("member" => $user, "username" => $username, "password" => $password, "password_confirm" => $password_confirm,
+        (new View("add_edit_user"))->show(array("member" => $user, "username" => $username, "password" => $password, "password_confirm" => $password_confirm,
             "fullname" => $fullname, "email" => $email, "birthdate" => $birthdate, "role" => $role, "errors" => $errors));
     }
 
-    
-    
     public function user_upd() {
         $user = $this->get_user_or_redirect();
         $profile = '';
