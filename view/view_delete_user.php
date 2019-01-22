@@ -1,8 +1,21 @@
-<?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Confirm Deletion</title>
+        <base href="<?= $web_root ?>"/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/styles.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class="title">Confirm Deletion</div>
+        <?php include("menu.html"); ?>
+        <div class="main">
+            <p> You are about to delete the user '<?= $user_del ?>'.<br>If this is correct, please confirm.</p>
+            <form method="post">
+                <input type="submit" name="confirm" value="Confirm">
+                <input type="submit" name="cancel" value="Cancel">
+            </form>
+        </div>
+    </body>
+</html>

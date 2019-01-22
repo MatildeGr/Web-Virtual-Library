@@ -45,44 +45,54 @@ class ControllerUser extends ControllerBis {
         }
         $errors = [];
         $user_del = '';
+
+
         if (isset($_GET['param1'])) {
-            $userdel = trim($_GET['param1']);
-            $user_del = user::get_user_by_username($userdel);
-            $user_del = $user_del->username;
-        }
-        if (isset($_POST["conf"]) && isset($_POST["username"])) {
-            $username = trim($_POST["username"]);
-            if ($_POST["conf"] === "true") {
-                if ($username === $user->username) {
-                    array_push($errors, "Vous ne pouvez pas vous supprimez.");
-                }
-                if (User::how_many_admin() === 1) {
-                    array_push($errors, "Vous etes le dernier admin, vous ne pouvez pas vous supprimez.");
-                }
-                if (count($errors) == 0) {
-                    User::del_user_by_name($username);
-                    $this->redirect("member", "user_lst");
-                }
+            $id = trim($_GET['param1']);
+            $user_del = user::get_user_by_id($id);
+
+            if (!$user_del) {
+                ToolsBis::abort('Unknown user');
             }
+            if ($user->id == $id) {
+                ToolsBis::abort("You may not delete yourself!");
+            }
+            $user_del = $user_del->username;
+        } else {
+            $this->redirect("user", "profile");
         }
-        (new View("delete"))->show(array("user" => $user, "user_del" => $user_del, "errors" => $errors));
+
+
+        if (isset($_POST['confirm'])) {
+            User::del_user_by_id($id);
+            $this->redirect("user", "user_lst");
+        } elseif (isset($_POST['cancel'])) {
+            $this->redirect("user", "user_lst");
+        }
+
+
+        (new View("delete_user"))->show(array("user" => $user, "user_del" => $user_del, "errors" => $errors));
     }
 
-    
     public function add_edit_user() {
-        if (ToolsBis::check_fields(['id'], $_GET)) {
+        $user = $this->get_user_or_redirect();
+        if ($user->is_member()) {
+            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
+        }
+        $is_admin = $user->is_admin();
+        if (isset($_GET['param1'])) {
             $is_new = false;
-            $id = sanitize($_GET['id']);
-            $usr = get_user($id);
+            $id = trim($_GET['param1']);
+            $usr = User::get_user_by_id($id);
             if (!$usr) {
                 abort('Unknown user');
             }
-            $username = $usr['username'];
-            $fullname = $usr['fullname'];
-            $email = $usr['email'];
-            $birthdate = $usr['birthdate'];
-            $role = $usr['role'];
-            $password = $usr['password'];
+            $username = $usr->username;
+            $fullname = $usr->fullname;
+            $email = $usr->email;
+            $birthdate = $usr->birthdate;
+            $role = $usr->role;
+            $password = $usr->hashed_password;
         } else {
             $is_new = true;
             $id = null;
@@ -91,85 +101,60 @@ class ControllerUser extends ControllerBis {
             $email = '';
             $birthdate = null;
             $role = 'member';
-            $password='';
+            $password = '';
         }
 
         if (ToolsBis::check_fields(['cancel'])) {
-            redirect('users.php');
+            $this->redirect("user", "user_lst");
         }
-        $errors=[];
-        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname, "password" => $password,
-            "email" => $email, "birthdate" => $birthdate, "role" => $role,"is_new"=>$is_new, "errors" => $errors));
-    }
 
-    public function user_add() {
-        $user = $this->get_user_or_redirect();
-        if (!($user->is_admin()) && !($user->is_manager())) {
-            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
+        if (!$user->is_admin() && ToolsBis::check_fields(['role'])) {
+            ToolsBis::abort("You may not change the role since you're not an admin.");
         }
-        $fullname = '';
-        $username = '';
-        $birthdate = '';
-        $email = '';
-        $password = '';
-        $password_confirm = '';
-        $role = '';
-        $errors = [];
-        if (isset($_POST['username']) && isset($_POST['fullname']) && isset($_POST['birthdate']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_confirm']) && isset($_POST['role'])) {
+        if (ToolsBis::check_fields(['save', 'username','fullname','email','birthdate']) && ($user->is_manager() || ToolsBis::check_fields(['role']))) {
+
             $username = trim($_POST['username']);
             $fullname = trim($_POST['fullname']);
-            $password = trim($_POST['password']);
-            $password_confirm = trim($_POST['password_confirm']);
             $email = trim($_POST['email']);
             $birthdate = trim($_POST['birthdate']);
-            $role = trim($_POST['role']);
-
-            if (!$user->is_admin()) {
-                $role = 'member';
+            // si c'est un nouveau user, on initialise son mot de passe avec son pseudo (convention)
+            if ($is_new) {
+                $password = $username;
             }
-            if ($birthdate === '') {
-                $birthdate = null;
+            $errors = User::validate_user($id, $username, $password, $password, $fullname, $email, $birthdate);
+
+            if ($user->is_admin()) {
+                $role = trim($_POST['role']);
+                // si j'édite un user existant et que je mets un rôle différent d'admin alors que le rôle courant de ce user
+                // est admin, et si c'est le seul admin en base de données, alors je dois déclencher une erreur
+                if (!$is_new && $role !== 'admin' && $usr->role === 'admin' && User::count_admins() === 1) {
+                    $errors[] = "You're the last admin in the system: you must keep your role";
+                }
             }
-            $userAdd = new User($fullname, $username, Tools::my_hash($password), $email, $role, $birthdate);
-            $errors = User::validate_unicity($username);
-            $errors = array_merge($errors, $user->validate());
-            $errors = array_merge($errors, $user->fullname_validate());
-            $errors = array_merge($errors, User::validate_passwords($password, $password_confirm));
-            $errors = array_merge($errors, User::validate_email($email));
-
-
-            if (count($errors) == 0) {
-                $userAdd->update();
-                Controller::log_user($user);
+            if (count($errors) === 0) {
+                // Si le user dont on a reçu l'id dans l'url est le user connecté et si son rôle ou son username ont changé,
+                // mettre à jour la session en reloguant l'utilisateur, sans faire de redirection (4ème paramètre de log_user).
+                if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
+                    log_user($logged_userid, $username, $role, false);
+                }
+                if ($is_new) {
+                    User::add_user($username, $password, $fullname, $email, $birthdate, $role);
+                } else {
+                    User::update_user($id, $username, $fullname, $email, $birthdate, $role);
+                    // si à cause d'un update du rôle on est devenu un membre, rediriger vers le profile
+                    if ($user->is_member()) {
+                        $this->redirect("user", "profile");
+                    }
+                }
+                $this->redirect("user", "user_lst");
             }
         }
 
-        (new View("add_edit_user"))->show(array("member" => $user, "username" => $username, "password" => $password, "password_confirm" => $password_confirm,
-            "fullname" => $fullname, "email" => $email, "birthdate" => $birthdate, "role" => $role, "errors" => $errors));
-    }
-
-    public function user_upd() {
-        $user = $this->get_user_or_redirect();
-        $profile = '';
         $errors = [];
-        if (!($user->is_admin()) && !($user->is_manager())) {
-            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
-        }
-        if (isset($_GET['param1'])) {
-            $profile = trim($_GET['param1']);
-        }
-
-        if (isset($_POST['fullname']) && isset($_POST['username']) && isset($_POST['birthdate']) && isset($_POST['email']) && isset($_POST['role'])) {
-            $fullname = trim($_POST['fullname']);
-            $username = trim($_POST['username']);
-            $birthdate = trim($_POST['birthdate']);
-            $email = trim($_POST['email']);
-            $role = trim($_POST['role']);
-        }
-
-
-
-        (new View("user_upd"))->show(array("user" => $user, "profile" => $profile, "errors" => $errors));
+        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname, 
+            "email" => $email, "birthdate" => $birthdate, "role" => $role, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
     }
+
+    
 
 }

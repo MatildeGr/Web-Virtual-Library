@@ -50,7 +50,7 @@ class User extends Model {
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"],$data["id"]);
+            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"], $data["id"]);
         }
     }
 
@@ -59,9 +59,19 @@ class User extends Model {
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
-            $results[] = new User($row["fullname"], $row["username"], $row["password"], $row["email"], $row["role"], $row["birthdate"],$row["id"]);
+            $results[] = new User($row["fullname"], $row["username"], $row["password"], $row["email"], $row["role"], $row["birthdate"], $row["id"]);
         }
         return $results;
+    }
+
+    public static function get_user_by_id($id) {
+        $query = self::execute("select * FROM user where id = :id", array("id" => $id));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"], $data["id"]);
+        }
     }
 
     //revoie true si une émail existe
@@ -165,6 +175,90 @@ class User extends Model {
 
     public static function del_user_by_name($username) {
         self::execute("delete FROM user where username = :username", array("username" => $username));
+    }
+
+    public static function del_user_by_id($id) {
+        self::execute("delete FROM user where id = :id", array("id" => $id));
+    }
+
+    public static function count_admins() {
+        $row = sql_fetch("SELECT count(*) from user where role='admin'");
+        return (int) $row[0];
+    }
+
+    public static function validate_user($id, $username, $password, $password_confirm, $fullname, $email, $birthdate) {
+        $errors = [];
+        $member = User::get_user_by_username($username);
+        if ($member && $member->id !== $id)
+            $errors[] = "This user name is already used.";
+        if (empty($username)) {
+            $errors[] = "User Name is required.";
+        } elseif (!ToolsBis::check_string_length($username, 3, 32)) {
+            $errors[] = "User Name length must be between 3 and 32 characters.";
+        }
+        if (empty($password)) {
+            $errors[] = "Password is required.";
+        }
+        if (empty($fullname)) {
+            $errors[] = "Full Name is required.";
+        } elseif (!ToolsBis::check_string_length($fullname, 3, 255)) {
+            $errors[] = "Full Name length must be between 3 and 255 characters.";
+        }
+        if (empty($email)) {
+            $errors[] = "Email is required.";
+        } elseif (!ToolsBis::check_string_length($email, 5, 64)) {
+            $errors[] = "Email length must be between 5 and 64 characters.";
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Email address is not valid";
+        } else {
+            $member = get_user_by_email($email);
+            if ($member && ($id === null || $member['id'] !== $id))
+                $errors[] = "This email address is already used";
+        }
+        if ($password != $password_confirm) {
+            $errors[] = "You have to enter twice the same password.";
+        }
+        if (!empty($birthdate)) {
+            if (!ToolsBis::is_valid_date($birthdate)) {
+                $errors[] = "Birth Date is not valid";
+            }
+            if ($birthdate > get_date('-18 years')) {
+                $errors[] = "User must be at least 18 years old";
+            }
+        }
+        return $errors;
+    }
+
+    public static function add_user($username, $password, $fullname, $email, $birthdate, $role = 'member') {
+        if (empty($birthdate))
+            $birthdate = null;
+        $id = self::execute("INSERT INTO user(username,password, fullname, email, birthdate, role)
+                 VALUES(:username,:password, :fullname, :email, :birthdate, :role)", array(
+            "username" => $username,
+            "password" => ToolsBis::my_hash($password),
+            "fullname" => $fullname,
+            "email" => $email,
+            "birthdate" => $birthdate,
+            "role" => $role
+                ), true  // pour récupérer l'id généré par la BD
+        );
+        return $id;
+    }
+
+    public static function update_user($id, $username, $fullname, $email, $birthdate, $role) {
+        if (empty($birthdate)){
+            $birthdate = null;
+        }
+        self::execute("UPDATE user SET username=:username, fullname=:fullname, email=:email, 
+                 birthdate=:birthdate, role=:role WHERE id=:id", array(
+            "username" => $username,
+            "fullname" => $fullname,
+            "email" => $email,
+            "birthdate" => $birthdate,
+            "role" => $role,
+            "id" => $id
+                )
+        );
     }
 
 }

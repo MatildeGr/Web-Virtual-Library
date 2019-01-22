@@ -31,13 +31,13 @@
                             <td><?= ToolsBis::format_date($usr->birthdate) ?></td>
                             <td><?= $usr->role ?></td>
                             <td>
-                                <form class="button" action="user/add_edit_user" method="GET">
-                                    <input type="hidden" name="id" value="<?= $usr->id ?>">
+                                <form class="button" action="user/add_edit_user/<?php echo $usr->id; ?>" method="GET">
+                                    <input type="hidden" >
                                     <input type="submit" value="Edit">
                                 </form>
                                 <?php if ($user->is_admin() && $user->id !== $usr->id): ?>
-                                    <form class="button" action="delete_user.php" method="GET">
-                                        <input type="hidden" name="id" value="<?= $usr->id ?>">
+                                    <form class="button" action="user/delete/<?= $usr->id ?>" method="GET">
+                                        <input type="hidden" ">
                                         <input type="submit" value="Delete">
                                     </form>
                                 <?php endif; ?>
