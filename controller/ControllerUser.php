@@ -75,6 +75,8 @@ class ControllerUser extends ControllerBis {
     }
 
     public function add_edit_user() {
+
+        $errors = [];
         $user = $this->get_user_or_redirect();
         if ($user->is_member()) {
             ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
@@ -111,7 +113,7 @@ class ControllerUser extends ControllerBis {
         if (!$user->is_admin() && ToolsBis::check_fields(['role'])) {
             ToolsBis::abort("You may not change the role since you're not an admin.");
         }
-        if (ToolsBis::check_fields(['save', 'username','fullname','email','birthdate']) && ($user->is_manager() || ToolsBis::check_fields(['role']))) {
+        if (ToolsBis::check_fields(['save', 'username', 'fullname', 'email', 'birthdate']) && ($user->is_manager() || ToolsBis::check_fields(['role']))) {
 
             $username = trim($_POST['username']);
             $fullname = trim($_POST['fullname']);
@@ -137,8 +139,12 @@ class ControllerUser extends ControllerBis {
                 if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
                     log_user($logged_userid, $username, $role, false);
                 }
-                if ($is_new) {
-                    User::add_user($username, $password, $fullname, $email, $birthdate, $role);
+                if ($is_new && $user->is_admin()) {
+                    User::add_user_from_admin($username, $password, $fullname, $email, $birthdate, $role);
+                    $this->redirect("user", "user_lst");
+                } elseif ($is_new && !$user->is_admin()) {
+                    User::add_user_from_manager($username, $password, $fullname, $email, $birthdate, $role);
+                    $this->redirect("user", "user_lst");
                 } else {
                     User::update_user($id, $username, $fullname, $email, $birthdate, $role);
                     // si à cause d'un update du rôle on est devenu un membre, rediriger vers le profile
@@ -150,11 +156,8 @@ class ControllerUser extends ControllerBis {
             }
         }
 
-        $errors = [];
-        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname, 
+        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname,
             "email" => $email, "birthdate" => $birthdate, "role" => $role, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
     }
-
-    
 
 }

@@ -54,6 +54,16 @@ class User extends Model {
         }
     }
 
+    public static function get_user_by_email($email) {
+        $query = self::execute("SELECT * FROM user where email = :email", array("email" => $email));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new User($data['fullname'], $data["username"], $data["password"], $data["email"], $data["role"], $data["birthdate"], $data["id"]);
+        }
+    }
+
     public static function get_user() {
         $query = self::execute("SELECT * FROM user", array());
         $data = $query->fetchAll();
@@ -186,6 +196,13 @@ class User extends Model {
         return (int) $row[0];
     }
 
+    public static function get_date($str) {
+        $ts = strtotime($str);
+        $d = new DateTime();
+        $d->setTimestamp($ts);
+        return $d->format('Y-m-d');
+    }
+
     public static function validate_user($id, $username, $password, $password_confirm, $fullname, $email, $birthdate) {
         $errors = [];
         $member = User::get_user_by_username($username);
@@ -211,7 +228,7 @@ class User extends Model {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Email address is not valid";
         } else {
-            $member = get_user_by_email($email);
+            $member = User::get_user_by_email($email);
             if ($member && ($id === null || $member['id'] !== $id))
                 $errors[] = "This email address is already used";
         }
@@ -222,31 +239,46 @@ class User extends Model {
             if (!ToolsBis::is_valid_date($birthdate)) {
                 $errors[] = "Birth Date is not valid";
             }
-            if ($birthdate > get_date('-18 years')) {
+            if ($birthdate > User::get_date('-18 years')) {
                 $errors[] = "User must be at least 18 years old";
             }
         }
         return $errors;
     }
 
-    public static function add_user($username, $password, $fullname, $email, $birthdate, $role = 'member') {
+    public static function add_user_from_manager($username, $password, $fullname, $email, $birthdate, $role = 'member') {
         if (empty($birthdate))
             $birthdate = null;
         $id = self::execute("INSERT INTO user(username,password, fullname, email, birthdate, role)
                  VALUES(:username,:password, :fullname, :email, :birthdate, :role)", array(
-            "username" => $username,
-            "password" => ToolsBis::my_hash($password),
-            "fullname" => $fullname,
-            "email" => $email,
-            "birthdate" => $birthdate,
-            "role" => $role
-                ), true  // pour récupérer l'id généré par la BD
+                    "username" => $username,
+                    "password" => ToolsBis::my_hash($password),
+                    "fullname" => $fullname,
+                    "email" => $email,
+                    "birthdate" => $birthdate,
+                    "role" => $role
+                        ), true  // pour récupérer l'id généré par la BD
+        );
+        return $id;
+    }
+      public static function add_user_from_admin($username, $password, $fullname, $email, $birthdate, $role) {
+        if (empty($birthdate))
+            $birthdate = null;
+        $id = self::execute("INSERT INTO user(username,password, fullname, email, birthdate, role)
+                 VALUES(:username,:password, :fullname, :email, :birthdate, :role)", array(
+                    "username" => $username,
+                    "password" => ToolsBis::my_hash($password),
+                    "fullname" => $fullname,
+                    "email" => $email,
+                    "birthdate" => $birthdate,
+                    "role" => $role
+                        ), true  // pour récupérer l'id généré par la BD
         );
         return $id;
     }
 
     public static function update_user($id, $username, $fullname, $email, $birthdate, $role) {
-        if (empty($birthdate)){
+        if (empty($birthdate)) {
             $birthdate = null;
         }
         self::execute("UPDATE user SET username=:username, fullname=:fullname, email=:email, 
