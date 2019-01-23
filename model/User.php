@@ -192,8 +192,9 @@ class User extends Model {
     }
 
     public static function count_admins() {
-        $row = sql_fetch("SELECT count(*) from user where role='admin'");
-        return (int) $row[0];
+        $query = self::execute("SELECT count(*) from user where role='admin'");
+        $result = $query->fetch();
+        return count($result);
     }
 
     public static function get_date($str) {
@@ -205,8 +206,8 @@ class User extends Model {
 
     public static function validate_user($id, $username, $password, $password_confirm, $fullname, $email, $birthdate) {
         $errors = [];
-        $member = User::get_user_by_username($username);
-        if ($member && $member->id !== $id)
+        $user = User::get_user_by_username($username);
+        if ($user && $user->id !== $id)
             $errors[] = "This user name is already used.";
         if (empty($username)) {
             $errors[] = "User Name is required.";
@@ -228,8 +229,8 @@ class User extends Model {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Email address is not valid";
         } else {
-            $member = User::get_user_by_email($email);
-            if ($member && ($id === null || $member['id'] !== $id))
+            $user = User::get_user_by_email($email);
+            if ($user && ($id === null || $user->id !== $id))
                 $errors[] = "This email address is already used";
         }
         if ($password != $password_confirm) {

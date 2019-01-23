@@ -139,12 +139,13 @@ class ControllerUser extends ControllerBis {
                 if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
                     log_user($logged_userid, $username, $role, false);
                 }
-                if ($is_new && $user->is_admin()) {
-                    User::add_user_from_admin($username, $password, $fullname, $email, $birthdate, $role);
-                    $this->redirect("user", "user_lst");
-                } elseif ($is_new && !$user->is_admin()) {
-                    User::add_user_from_manager($username, $password, $fullname, $email, $birthdate, $role);
-                    $this->redirect("user", "user_lst");
+                if ($is_new) {
+                    if ($user->is_admin()) {
+                        User::add_user_from_admin($username, $password, $fullname, $email, $birthdate, $role);
+                    }
+                    if (!$user->is_admin()) {
+                        User::add_user_from_manager($username, $password, $fullname, $email, $birthdate, $role);
+                    }
                 } else {
                     User::update_user($id, $username, $fullname, $email, $birthdate, $role);
                     // si à cause d'un update du rôle on est devenu un membre, rediriger vers le profile
@@ -155,7 +156,6 @@ class ControllerUser extends ControllerBis {
                 $this->redirect("user", "user_lst");
             }
         }
-
         (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname,
             "email" => $email, "birthdate" => $birthdate, "role" => $role, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
     }
