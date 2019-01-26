@@ -137,7 +137,8 @@ class ControllerUser extends ControllerBis {
                 // Si le user dont on a reçu l'id dans l'url est le user connecté et si son rôle ou son username ont changé,
                 // mettre à jour la session en reloguant l'utilisateur, sans faire de redirection (4ème paramètre de log_user).
                 if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
-                    log_user($logged_userid, $username, $role, false);
+                     $this->redirect("user", "profile");/// GROS SOUCIS ICI J'ARRIVE PAS :)))
+                   // Controller::log_user($logged_userid, $username, $role, false);
                 }
                 if ($is_new) {
                     if ($user->is_admin()) {

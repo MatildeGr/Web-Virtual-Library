@@ -195,7 +195,7 @@ class User extends Model {
         $query = self::execute("SELECT count(*) from user where role='admin'");
         $result = $query->fetch();
         return count($result);
-    }
+    }// CETTE FONCTION MERDE COMPLET...
 
     public static function get_date($str) {
         $ts = strtotime($str);
