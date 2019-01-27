@@ -14,38 +14,27 @@ class ControllerUser extends ControllerBis {
 
     public function profile() {
         $user = $this->get_user_or_redirect();
-
         if (!($user->is_admin()) && !($user->is_manager())) {
             $menu = "view/menu_member.html";
         } else {
             $menu = "view/menu.html";
         }
-
-        if (isset($_GET["param1"]) && $_GET["param1"] !== "") {
-            $user = User::get_user_by_username($_GET["param1"]);
-        }
-
+        
         (new View("profile"))->show(array("username" => $user, "menu" => $menu));
     }
 
     public function user_lst() {
         $user = $this->get_user_or_redirect();
-        if (!($user->is_admin()) && !($user->is_manager())) {
-            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
-        }
-        $all_users = User::get_user();
-
+        $this->check_manager_or_admin();
+        $all_users = User::get_users();
         (new View("users"))->show(array("user" => $user, "users" => $all_users));
     }
 
     public function delete() {
         $user = $this->get_user_or_redirect();
-        if (!$user->is_admin()) {
-            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
-        }
+        $this->check_admin();
         $errors = [];
         $user_del = '';
-
 
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
@@ -62,15 +51,12 @@ class ControllerUser extends ControllerBis {
             $this->redirect("user", "profile");
         }
 
-
         if (isset($_POST['confirm'])) {
             User::del_user_by_id($id);
             $this->redirect("user", "user_lst");
         } elseif (isset($_POST['cancel'])) {
             $this->redirect("user", "user_lst");
         }
-
-
         (new View("delete_user"))->show(array("user" => $user, "user_del" => $user_del, "errors" => $errors));
     }
 
@@ -137,8 +123,8 @@ class ControllerUser extends ControllerBis {
                 // Si le user dont on a reçu l'id dans l'url est le user connecté et si son rôle ou son username ont changé,
                 // mettre à jour la session en reloguant l'utilisateur, sans faire de redirection (4ème paramètre de log_user).
                 if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
-                     $this->redirect("user", "profile");/// GROS SOUCIS ICI J'ARRIVE PAS :)))
-                   // Controller::log_user($logged_userid, $username, $role, false);
+                     //$this->redirect("user", "profile");/// GROS SOUCIS ICI J'ARRIVE PAS :)))
+                     //Controller::log_user($logged_userid, $username, $role, false);
                 }
                 if ($is_new) {
                     if ($user->is_admin()) {

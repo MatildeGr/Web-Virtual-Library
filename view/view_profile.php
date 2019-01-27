@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="title"><?= $username->username ?>'s Profile!</div>
-        <?php include('menu.html');?>
+        <?php include($menu);?>
         <div class="main">
             <?php if (strlen($username->username) == 0): ?>
                 No profile string entered yet!
