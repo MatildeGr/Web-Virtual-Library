@@ -64,9 +64,8 @@ class ControllerUser extends ControllerBis {
 
         $errors = [];
         $user = $this->get_user_or_redirect();
-        if ($user->is_member()) {
-            ToolsBis::abort("Vous ne disposez pas des droits d'aministrateur.");
-        }
+        $this->check_manager_or_admin();
+
         $is_admin = $user->is_admin();
         if (isset($_GET['param1'])) {
             $is_new = false;
@@ -96,7 +95,7 @@ class ControllerUser extends ControllerBis {
             $this->redirect("user", "user_lst");
         }
 
-        if (!$user->is_admin() && ToolsBis::check_fields(['role'])) {
+        if (!$is_admin && ToolsBis::check_fields(['role'])) {
             ToolsBis::abort("You may not change the role since you're not an admin.");
         }
         if (ToolsBis::check_fields(['save', 'username', 'fullname', 'email', 'birthdate']) && ($user->is_manager() || ToolsBis::check_fields(['role']))) {
@@ -111,11 +110,11 @@ class ControllerUser extends ControllerBis {
             }
             $errors = User::validate_user($id, $username, $password, $password, $fullname, $email, $birthdate);
 
-            if ($user->is_admin()) {
+            if ($is_admin) {
                 $role = trim($_POST['role']);
                 // si j'édite un user existant et que je mets un rôle différent d'admin alors que le rôle courant de ce user
                 // est admin, et si c'est le seul admin en base de données, alors je dois déclencher une erreur
-                if (!$is_new && $role !== 'admin' && $usr->role === 'admin' && User::count_admins() === 1) {
+                if (!$is_new && $role !== 'admin' && $role === 'admin' && User::count_admins() === 1) {
                     $errors[] = "You're the last admin in the system: you must keep your role";
                 }
             }

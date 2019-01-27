@@ -11,11 +11,26 @@
         <div class="title"><?= $username->username ?>'s Profile!</div>
         <?php include($menu);?>
         <div class="main">
-            <?php if (strlen($username->username) == 0): ?>
-                No profile string entered yet!
-            <?php else: ?>
-                <?= $username->username; ?>
-            <?php endif; ?>
+            <p>These are your currently rented books. Don't forget to return them in time!</p>
+             <table class="message_list">
+                <thead>
+                    <tr>
+                        <th>Rental Date/Time</th>
+                        <th>Book</th>
+                        <th>To be returned on</th>
+                    </tr>
+                </thead>
+                <tbody>
+<!--                     <?php foreach ($books as $book) : ?>
+                        <tr>
+                            <td><?= $book->retaldate ?></td>
+                            <td><?= $book->book ?></td>
+                            <td><?= $book->returndate ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+-->
+                </tbody>
+             </table>
             <br><br>
         </div>
     </body>

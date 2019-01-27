@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>edit book</title>
+        <base href="<?= $web_root ?>"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/styles.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class="title">Edit book</div>
+         <?php include("menu.html"); ?>
+        <div class="main">
+            <form action="" method="post">
+                <table>
+                    <tr>
+                        <td>ISBN(*):</td>
+                        <td><input id="isbn" name="isbn" type="text" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>Title(*):</td>
+                        <td><input id="title" name="title" type="text" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>Author(*)</td>
+                        <td><input id="author" name="author" type="text" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>Editor(*)</td>
+                        <td><input id="editor" name="editor" type="text" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>Picture:</td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" name="save" value="Save">
+                <input type="submit" name="cancel" value="Cancel">
+            </form>
+            <!--<?php include('insert_errors.php'); ?>-->
+
+        </div>
+    </body>
+</html>

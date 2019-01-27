@@ -99,3 +99,14 @@ form.link input[type="submit"] {
 form.button {
     display: inline;
 }
+.book_list .filter{
+    padding-bottom: 30px;
+    font-size: 14px;
+}
+.book_rent{
+    margin-top: 40px;
+}
+.book_rent form{
+    margin-top : 30px;
+    font-size: 14px;
+}
