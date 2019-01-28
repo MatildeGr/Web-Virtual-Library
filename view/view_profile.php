@@ -21,14 +21,14 @@
                     </tr>
                 </thead>
                 <tbody>
-<!--                     <?php foreach ($books as $book) : ?>
+                     <?php foreach ($books as $book) : ?>
                         <tr>
-                            <td><?= $book->retaldate ?></td>
-                            <td><?= $book->book ?></td>
-                            <td><?= $book->returndate ?></td>
+                            <td><?= ToolsBis::format_datetime($book->rentaldate) ?></td>
+                            <td><?= $book->book->title ?></td>
+                            <td><?= ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate.Rental::getMaxDuration())) ?></td>
                         </tr>
                     <?php endforeach; ?>
--->
+
                 </tbody>
              </table>
             <br><br>

@@ -35,8 +35,8 @@ class ToolsBis extends Tools {
         return $date === null ? '' : (new DateTime($date))->format('d/m/Y');
     }
 
-    public static function format_dateTime($date) {
-        return $date === null ? '' : (new DateTime($date))->format('d/m/Y  H:i:s');
+    public static function format_datetime($date) {
+        return $date === null ? '' : (new DateTime($date))->format('d/m/Y H:i:s');
     }
 
     public static function is_valid_date($date, $format = 'Y-m-d') {
@@ -49,6 +49,13 @@ class ToolsBis extends Tools {
         $d = new DateTime();
         $d->setTimestamp($ts);
         return $d->format('Y-m-d');
+    }
+    
+        public static function get_datetime($str) {
+        $ts = strtotime($str);
+        $d = new DateTime();
+        $d->setTimestamp($ts);
+        return $d->format('Y-m-d H:i:s');
     }
 
     public static function validate_path() {
