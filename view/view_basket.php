@@ -33,15 +33,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!--                     <?php foreach ($books as $book) : ?>
-                                                                    <tr>
-                                                                        <td><?= $book->isnb ?></td>
-                                                                        <td><?= $book->title ?></td>
-                                                                        <td><?= $book->author ?></td>
-                                                                        <td><?= $book->editor ?></td>
-                                                                    </tr>
+                        <?php foreach ($books as $book) : ?>
+                            <tr>
+                                <td><?= $book->isbn ?></td>
+                                <td><?= $book->title ?></td>
+                                <td><?= $book->author ?></td>
+                                <td><?= $book->editor ?></td>
+                                <td><button name="oeil" type="button" value="book" img src="eyes.png" /> </td>
+                            </tr>
                         <?php endforeach; ?>
-                        -->
+
                     </tbody>
                 </table>
             </div>
@@ -60,13 +61,13 @@
                     </thead>
                     <tbody>
                         <!--                     <?php foreach ($books as $book) : ?>
-                                                                        <tr>
-                                                                            <td><?= $book->isnb ?></td>
-                                                                            <td><?= $book->title ?></td>
-                                                                            <td><?= $book->author ?></td>
-                                                                            <td><?= $book->editor ?></td>
-                                                                            <td></td>
-                                                                        </tr>
+                                                                            <tr>
+                                                                                <td><?= $book->isnb ?></td>
+                                                                                <td><?= $book->title ?></td>
+                                                                                <td><?= $book->author ?></td>
+                                                                                <td><?= $book->editor ?></td>
+                                                                                <td></td>
+                                                                            </tr>
                         <?php endforeach; ?>
                         -->
                     </tbody>
@@ -76,7 +77,7 @@
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                    <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>

@@ -1,4 +1,6 @@
 <?php
+require_once 'model/User.php';
+require_once 'framework/Controller.php';
 
 class ControllerBis extends Controller {
 

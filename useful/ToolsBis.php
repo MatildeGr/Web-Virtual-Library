@@ -35,6 +35,10 @@ class ToolsBis extends Tools {
         return $date === null ? '' : (new DateTime($date))->format('d/m/Y');
     }
 
+    public static function format_dateTime($date) {
+        return $date === null ? '' : (new DateTime($date))->format('d/m/Y  H:i:s');
+    }
+
     public static function is_valid_date($date, $format = 'Y-m-d') {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) === $date;
@@ -45,6 +49,25 @@ class ToolsBis extends Tools {
         $d = new DateTime();
         $d->setTimestamp($ts);
         return $d->format('Y-m-d');
+    }
+
+    public static function validate_path() {
+        if (isset($_FILES['image']['name']) && $_FILES['image']['name'] != '') {
+            if ($_FILES['image']['error'] == 0) {
+                $typeOK = TRUE;
+
+                if ($_FILES['image']['type'] == "image/gif")
+                    $saveTo = $user . ".gif";
+                else if ($_FILES['image']['type'] == "image/jpeg")
+                    $saveTo = $user . ".jpg";
+                else if ($_FILES['image']['type'] == "image/png")
+                    $saveTo = $user . ".png";
+                else {
+                    $typeOK = FALSE;
+                    $error = "Unsupported image format : gif, jpeg ou png !";
+                }
+            }
+        }
     }
 
 }
