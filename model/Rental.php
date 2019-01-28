@@ -31,5 +31,9 @@ class Rental extends Model {
         }
         return $results;
     }
+    
+    public static function getMaxDuration(){
+        return Configuration::get("max_time");
+    }
 
 }

@@ -23,9 +23,9 @@
                 <tbody>
                      <?php foreach ($books as $book) : ?>
                         <tr>
-                            <td><?= $book->rentaldate ?></td>
+                            <td><?= ToolsBis::format_datetime($book->rentaldate) ?></td>
                             <td><?= $book->book->title ?></td>
-                            <td><?= $book->returndate ?></td>
+                            <td><?= ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate.Rental::getMaxDuration())) ?></td>
                         </tr>
                     <?php endforeach; ?>
 
