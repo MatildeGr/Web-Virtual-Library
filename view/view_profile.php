@@ -21,14 +21,14 @@
                     </tr>
                 </thead>
                 <tbody>
-<!--                     <?php foreach ($books as $book) : ?>
+                     <?php foreach ($books as $book) : ?>
                         <tr>
-                            <td><?= $book->retaldate ?></td>
-                            <td><?= $book->book ?></td>
+                            <td><?= $book->rentaldate ?></td>
+                            <td><?= $book->book->title ?></td>
                             <td><?= $book->returndate ?></td>
                         </tr>
                     <?php endforeach; ?>
--->
+
                 </tbody>
              </table>
             <br><br>

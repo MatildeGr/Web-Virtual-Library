@@ -18,4 +18,18 @@ class Rental extends Model {
         $this->returndate = $returndate;
     }
 
+    public static function currently_rent($userid) {
+        $query = self::execute("select * from rental  where user = :user", array("user" => $userid));
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            if($row['returndate'] === null){
+                $id = $row['book'];
+                $book = Book::get_by_id($id);
+                $results[] = new Rental($row["user"], $book, $row["rentaldate"], $row["returndate"], $row["id"]);
+            }
+        }
+        return $results;
+    }
+
 }

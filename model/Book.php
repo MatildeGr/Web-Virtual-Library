@@ -20,4 +20,14 @@ class Book extends Model {
         $this->picture = $picture;
     }
 
+    public static function get_by_id($id) {
+        $query = self::execute("SELECT * FROM book where id = :id", array("id" => $id));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Book($data["isbn"], $data["title"], $data["author"], $data["editor"], $data["picture"], $data["id"]);
+        }
+    }
+
 }

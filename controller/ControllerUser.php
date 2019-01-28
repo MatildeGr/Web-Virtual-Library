@@ -2,6 +2,8 @@
 
 require_once 'controller/controllerbis.php';
 require_once 'model/User.php';
+require_once 'model/Rental.php';
+require_once 'model/Book.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 require_once 'useful/ToolsBis.php';
@@ -19,8 +21,8 @@ class ControllerUser extends ControllerBis {
         } else {
             $menu = "view/menu.html";
         }
-        
-        (new View("profile"))->show(array("username" => $user, "menu" => $menu));
+        $books = Rental::currently_rent($user->id);
+        (new View("profile"))->show(array("username" => $user, "menu" => $menu, "books"=>$books));
     }
 
     public function user_lst() {
