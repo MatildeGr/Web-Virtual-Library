@@ -65,7 +65,13 @@
                     </tbody>
                 </table>
             </div>
-
+            <div class='main'>
+                <?php if ($user->is_admin()) : ?>
+                    <form class="button" action="book/add_edit_book/" method="GET">
+                        <input type="submit" value="Add book">
+                    </form>
+                <?php endif; ?>
+            </div>
             <div class="book_rent">
                 <p>Basket of books to rent</p>
                 <table class="message_list">
@@ -80,13 +86,13 @@
                     </thead>
                     <tbody>
                         <!--                     <?php foreach ($books as $book) : ?>
-                                                                                                            <tr>
-                                                                                                                <td><?= $book->isnb ?></td>
-                                                                                                                <td><?= $book->title ?></td>
-                                                                                                                <td><?= $book->author ?></td>
-                                                                                                                <td><?= $book->editor ?></td>
-                                                                                                                <td></td>
-                                                                                                            </tr>
+                                                                                                                        <tr>
+                                                                                                                            <td><?= $book->isnb ?></td>
+                                                                                                                            <td><?= $book->title ?></td>
+                                                                                                                            <td><?= $book->author ?></td>
+                                                                                                                            <td><?= $book->editor ?></td>
+                                                                                                                            <td></td>
+                                                                                                                        </tr>
                         <?php endforeach; ?>
                         -->
                     </tbody>
@@ -96,7 +102,7 @@
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                                                                    <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>

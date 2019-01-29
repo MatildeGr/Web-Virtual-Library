@@ -52,8 +52,8 @@ class Book extends Model {
 
     public static function edit_book($id, $isbn, $title, $author, $editor, $picture) {
        // if (validate_isbn($isbn)) {
-            $id = self::execute("update book set isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture
-                where id=:id", array(
+            $id = self::execute("UPDATE book SET isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture
+                WHERE id=:id", array(
                         "isbn" => $isbn,
                         "title" => $title,
                         "author" => $author,

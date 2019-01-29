@@ -15,19 +15,19 @@
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
-                        <td><input id="isbn" name="isbn" type="text" value=""></td>
+                        <td><input id="isbn" name="isbn" type="text" value="<?php echo $isbn?>"></td>
                     </tr>
                     <tr>
                         <td>Title(*):</td>
-                        <td><input id="title" name="title" type="text" value=""></td>
+                        <td><input id="title" name="title" type="text" value="<?php echo $title?>"></td>
                     </tr>
                     <tr>
                         <td>Author(*)</td>
-                        <td><input id="author" name="author" type="text" value=""></td>
+                        <td><input id="author" name="author" type="text" value="<?php echo $author?>"></td>
                     </tr>
                     <tr>
                         <td>Editor(*)</td>
-                        <td><input id="editor" name="editor" type="text" value=""></td>
+                        <td><input id="editor" name="editor" type="text" value="<?php echo $editor?>"></td>
                     </tr>
                     <tr>
                         <td>Picture:</td>
