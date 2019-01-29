@@ -19,10 +19,10 @@ class Book extends Model {
         $this->editor = $editor;
         $this->picture = $picture;
     }
-    
-    public static function validate_isbn($isbn){
-        
-    }
+//
+//    public static function validate_isbn($isbn) {
+//        
+//    }
 
     public static function add_book($isbn, $title, $author, $editor, $picture) {
         if (empty($picture))
@@ -50,6 +50,21 @@ class Book extends Model {
         return $results;
     }
 
+    public static function edit_book($id, $isbn, $title, $author, $editor, $picture) {
+       // if (validate_isbn($isbn)) {
+            $id = self::execute("update book set isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture
+                where id=:id", array(
+                        "isbn" => $isbn,
+                        "title" => $title,
+                        "author" => $author,
+                        "editor" => $editor,
+                        "picture" => $picture,
+                        "id" => $id
+                            )
+            );
+        //}
+    }
+
     public static function get_by_id($id) {
         $query = self::execute("SELECT * FROM book where id = :id", array("id" => $id));
         $data = $query->fetch();
@@ -58,6 +73,10 @@ class Book extends Model {
         } else {
             return new Book($data["isbn"], $data["title"], $data["author"], $data["editor"], $data["picture"], $data["id"]);
         }
+    }
+    
+     public static function del_book_by_id($id) {
+        self::execute("delete FROM book where id = :id", array("id" => $id));
     }
 
 }

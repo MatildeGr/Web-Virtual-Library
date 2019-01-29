@@ -39,7 +39,26 @@
                                 <td><?= $book->title ?></td>
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
-                                <td><button name="oeil" type="button" value="book" img src="eyes.png" /> </td>
+                                <td>  <?php if ($user->is_admin()) : ?>
+                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="hidden" >
+                                            <input type="image" value="Edit" src='logo/pen.png'>
+                                        </form>
+                                        <form class="button" action="book/delete_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="hidden" >
+                                            <input type="image" value="Edit" src='logo/garbage.png'>
+                                        </form>
+                                    <?php endif; ?>
+                                    <?php if (!$user->is_admin()) : ?>
+                                        <form class="button" action="book/detail_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="hidden" >
+                                            <input type="image" value="Edit" src='logo/eyes.png'>
+                                        </form>
+                                    <?php endif; ?>
+                                    <form class="button" action="<?php echo $book->id; ?>" method="GET">
+                                        <input type="hidden" >
+                                        <input type="image" value="Edit" src='logo/arrow_bottom.png'>
+                                    </form></td>
                             </tr>
                         <?php endforeach; ?>
 
@@ -61,13 +80,13 @@
                     </thead>
                     <tbody>
                         <!--                     <?php foreach ($books as $book) : ?>
-                                                                            <tr>
-                                                                                <td><?= $book->isnb ?></td>
-                                                                                <td><?= $book->title ?></td>
-                                                                                <td><?= $book->author ?></td>
-                                                                                <td><?= $book->editor ?></td>
-                                                                                <td></td>
-                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td><?= $book->isnb ?></td>
+                                                                                                                <td><?= $book->title ?></td>
+                                                                                                                <td><?= $book->author ?></td>
+                                                                                                                <td><?= $book->editor ?></td>
+                                                                                                                <td></td>
+                                                                                                            </tr>
                         <?php endforeach; ?>
                         -->
                     </tbody>
@@ -77,7 +96,7 @@
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>
