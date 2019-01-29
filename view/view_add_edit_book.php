@@ -2,17 +2,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>edit book</title>
+        <title><?php echo $titlePage ?> book</title>
         <base href="<?= $web_root ?>"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
-        <div class="title">Edit book</div>
+        <div class="title"><?php echo $titlePage ?> book</div>
         <?php include("menu.html"); ?>
         <div class="main">
             <form action="" method="post" enctype='multipart/form-data'>
-                <!- besoin du enctype='multipart/form-data' dans la signature du formulaire mais rend l'utilisation impossible -->
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
@@ -32,7 +31,9 @@
                     </tr>
                     <tr>
                         <td>Picture:</td>
+                        <?php if (!$view): ?>
                         <td><input id="picture" name="picture" type="file" accept="image/x-png, image/gif, image/jpeg"></td>
+                        <?php endif; ?>
                     </tr>
                     <tr>
                         <td></td>
@@ -41,7 +42,9 @@
                     <?php endif; ?>
                     </tr>
                 </table>
+                <?php if (!$view): ?>
                 <input type="submit" name="save" value="Save">
+                <?php endif; ?>
                 <input type="submit" name="cancel" value="Cancel">
             </form>
             <?php include('insert_errors.php'); ?>

@@ -50,9 +50,9 @@
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
-                                        <form class="button" action="book/detail_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type="hidden" >
-                                            <input type="image" value="Edit" src='logo/eyes.png'>
+                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
+                                            
+                                            <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
                                     <form class="button" action="<?php echo $book->id; ?>" method="GET">

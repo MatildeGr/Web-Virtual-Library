@@ -10,7 +10,6 @@ class ControllerBook extends ControllerBis {
 
     public function basket() {
         $user = $this->get_user_or_redirect();
-        $this->check_manager_or_admin();
         $all_books = Book::get_books();
         (new View("basket"))->show(array("user" => $user, "books" => $all_books));
     }
@@ -20,45 +19,44 @@ class ControllerBook extends ControllerBis {
     public function add_edit_book() {
         $errors = [];
         $user = $this->get_user_or_redirect();
-        $this->check_manager_or_admin();
-        $is_admin = $user->is_admin();
-
         if (isset($_GET['param1'])) {
-            $is_new = false;
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
             if (!$book) {
-                abort('Unknown book');
+                ToolsBis::abort('Unknown book');
             }
             $isbn = $book->isbn;
             $title = $book->title;
             $author = $book->author;
             $editor = $book->editor;
             $picture_path = $book->picture;
+            $titlePage = "Edit";
         } else {
-            $is_new = true;
             $id = null;
             $isbn = '';
             $title = '';
             $author = '';
             $editor = '';
             $picture_path = '';
+            $titlePage = "Add new";
+        }
+        if ($this->isMember()) {
+            $view = true;
+            $titlePage = "View";
+        } else {
+            $view = false;
         }
 
         if (ToolsBis::check_fields(['cancel'])) {
             $this->redirect("book", "basket");
         }
-        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor'])) {
+        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor']) && !$view) {
             //&& ($user->is_admin() || ToolsBis::check_fields(['role'])) à quoi sert elle ???
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
-
-
-
             $errors = Book::validateBook($id, $isbn, $title, $author, $editor);
-
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
                 $errors = ToolsBis::validate_photo($_FILES['picture']);
                 if (empty($errors)) {
@@ -83,7 +81,8 @@ class ControllerBook extends ControllerBis {
             }
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
-            "author" => $author, "editor" => $editor, "picture" => $picture_path, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
+            "author" => $author, "editor" => $editor, "picture" => $picture_path,
+            "errors" => $errors, "view" => $view, "titlePage" => $titlePage));
     }
 
     public function delete_book() {
