@@ -50,13 +50,17 @@ class ToolsBis extends Tools {
         $d->setTimestamp($ts);
         return $d->format('Y-m-d');
     }
-    
-        public static function get_datetime($str) {
+
+    public static function get_datetime($str) {
         $ts = strtotime($str);
         $d = new DateTime();
         $d->setTimestamp($ts);
         return $d->format('Y-m-d H:i:s');
     }
+
+    /* ======================================= */
+    /* === Fonctions de gestion des photos === */
+    /* ======================================= */
 
     public static function validate_path() {
         if (isset($_FILES['image']['name']) && $_FILES['image']['name'] != '') {
@@ -75,6 +79,38 @@ class ToolsBis extends Tools {
                 }
             }
         }
+    }
+
+    //renvoie un tableau d'erreur(s) 
+    //le tableau est vide s'il n'y a pas d'erreur.
+    public static function validate_photo($file) {
+        $errors = [];
+        if (isset($file['name']) && $file['name'] != '') {
+            if ($file['error'] == 0) {
+                $valid_types = array("image/gif", "image/jpeg", "image/png");
+                if (!in_array($_FILES['image']['type'], $valid_types)) {
+                    $errors[] = "Unsupported image format : gif, jpg/jpeg or png.";
+                }
+            } else {
+                $errors[] = "Error while uploading file.";
+            }
+        }
+        return $errors;
+    }
+
+    //pre : validate_photo($file) returns true
+    public function generate_photo_name($file) {
+        //note : time() est utilisé pour que la nouvelle image n'aie pas
+        //       le meme nom afin d'éviter que le navigateur affiche
+        //       une ancienne image présente dans le cache
+        if ($_FILES['image']['type'] == "image/gif") {
+            $saveTo = $this->pseudo . time() . ".gif";
+        } else if ($_FILES['image']['type'] == "image/jpeg") {
+            $saveTo = $this->pseudo . time() . ".jpg";
+        } else if ($_FILES['image']['type'] == "image/png") {
+            $saveTo = $this->pseudo . time() . ".png";
+        }
+        return $saveTo;
     }
 
 }

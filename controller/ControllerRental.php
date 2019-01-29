@@ -8,8 +8,6 @@ require_once 'useful/ToolsBis.php';
 
 class ControllerRental extends ControllerBis {
 
-    public function basket(){
-        (new View("basket"))->show(array());
-    }
+
     
 }

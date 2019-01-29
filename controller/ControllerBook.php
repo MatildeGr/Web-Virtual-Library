@@ -20,12 +20,13 @@ class ControllerBook extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $this->check_manager_or_admin();
         $is_admin = $user->is_admin();
+
         if (isset($_GET['param1'])) {
             $is_new = false;
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
-            if (!$user) {
-                abort('Unknown user');
+            if (!$book) {
+                abort('Unknown book');
             }
             $isbn = $book->isbn;
             $title = $book->title;
@@ -45,14 +46,32 @@ class ControllerBook extends ControllerBis {
         if (ToolsBis::check_fields(['cancel'])) {
             $this->redirect("book", "basket");
         }
-        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor']) && ($user->is_admin() || ToolsBis::check_fields(['role']))) {
-
+        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'picture'])) {
+            //&& ($user->is_admin() || ToolsBis::check_fields(['role'])) à quoi sert elle ???
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
-            $picture_path = trim($_POST[picture_path]);
-            //$errors = Book::validate_book($isbn, $title, $author, $editor, $picture_path);
+            $picture_path = trim($_POST['picture']);
+
+
+            $errors = Book::validateBook($id, $isbn, $title, $author, $editor);
+
+            if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
+                ToolsBis::abort("ok");
+                $errors = Member::validate_photo($_FILES['picture']);
+                if (empty($errors)) {
+                    $saveTo = ToolsBis::generate_photo_name($_FILES['picture']);
+//                    $oldFileName = $member->picture_path;
+//                    if ($oldFileName && file_exists("picture/" . $oldFileName)) {
+//                        unlink("upload/" . $oldFileName);
+//                    }
+                    move_uploaded_file($_FILES['picture']['tmp_name'], "picture/$saveTo");
+                    $picture_path = $saveTo;
+                }
+            }
+
+
             if (count($errors) === 0) {
                 if ($is_new) {
                     Book::add_book($isbn, $title, $author, $editor, $picture_path);
