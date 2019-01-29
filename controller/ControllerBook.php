@@ -15,6 +15,8 @@ class ControllerBook extends ControllerBis {
         (new View("basket"))->show(array("user" => $user, "books" => $all_books));
     }
 
+    const UPLOAD_ERR_OK = 0;
+
     public function add_edit_book() {
         $errors = [];
         $user = $this->get_user_or_redirect();
@@ -46,28 +48,27 @@ class ControllerBook extends ControllerBis {
         if (ToolsBis::check_fields(['cancel'])) {
             $this->redirect("book", "basket");
         }
-        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'picture'])) {
+        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor'])) {
             //&& ($user->is_admin() || ToolsBis::check_fields(['role'])) à quoi sert elle ???
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
-            $picture_path = trim($_POST['picture']);
+
 
 
             $errors = Book::validateBook($id, $isbn, $title, $author, $editor);
 
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
-                ToolsBis::abort("ok");
-                $errors = Member::validate_photo($_FILES['picture']);
+                $errors = ToolsBis::validate_photo($_FILES['picture']);
                 if (empty($errors)) {
                     $saveTo = ToolsBis::generate_photo_name($_FILES['picture']);
-//                    $oldFileName = $member->picture_path;
-//                    if ($oldFileName && file_exists("picture/" . $oldFileName)) {
-//                        unlink("upload/" . $oldFileName);
-//                    }
+                    $oldFileName = $picture_path;
+                    if ($oldFileName && file_exists("picture/" . $oldFileName)) {
+                        unlink("picture/" . $oldFileName);
+                    }
                     move_uploaded_file($_FILES['picture']['tmp_name'], "picture/$saveTo");
-                    $picture_path = $saveTo;
+                    $picture_path = "picture/$saveTo";
                 }
             }
 

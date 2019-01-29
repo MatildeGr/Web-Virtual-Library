@@ -11,7 +11,7 @@
         <div class="title">Edit book</div>
         <?php include("menu.html"); ?>
         <div class="main">
-            <form action="" method="post">
+            <form action="" method="post" enctype='multipart/form-data'>
                 <!- besoin du enctype='multipart/form-data' dans la signature du formulaire mais rend l'utilisation impossible -->
                 <table>
                     <tr>

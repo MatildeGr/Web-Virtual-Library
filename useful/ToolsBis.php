@@ -88,7 +88,7 @@ class ToolsBis extends Tools {
         if (isset($file['name']) && $file['name'] != '') {
             if ($file['error'] == 0) {
                 $valid_types = array("image/gif", "image/jpeg", "image/png");
-                if (!in_array($_FILES['image']['type'], $valid_types)) {
+                if (!in_array($_FILES['picture']['type'], $valid_types)) {
                     $errors[] = "Unsupported image format : gif, jpg/jpeg or png.";
                 }
             } else {
@@ -99,16 +99,16 @@ class ToolsBis extends Tools {
     }
 
     //pre : validate_photo($file) returns true
-    public function generate_photo_name($file) {
+    public static function generate_photo_name($file) {
         //note : time() est utilisé pour que la nouvelle image n'aie pas
         //       le meme nom afin d'éviter que le navigateur affiche
         //       une ancienne image présente dans le cache
-        if ($_FILES['image']['type'] == "image/gif") {
-            $saveTo = $this->pseudo . time() . ".gif";
-        } else if ($_FILES['image']['type'] == "image/jpeg") {
-            $saveTo = $this->pseudo . time() . ".jpg";
-        } else if ($_FILES['image']['type'] == "image/png") {
-            $saveTo = $this->pseudo . time() . ".png";
+        if ($_FILES['picture']['type'] == "image/gif") {
+            $saveTo = $title . time() . ".gif";
+        } else if ($_FILES['picture']['type'] == "image/jpeg") {
+            $saveTo = $title . time() . ".jpg";
+        } else if ($_FILES['picture']['type'] == "image/png") {
+            $saveTo = $title . time() . ".png";
         }
         return $saveTo;
     }
