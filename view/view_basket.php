@@ -92,7 +92,10 @@
                                     <td><?= $book->title ?></td>
                                     <td><?= $book->author ?></td>
                                     <td><?= $book->editor ?></td>
-                                    <td></td>
+                                    <td> <form class="button" action="book/basket/<?php echo $book->id; ?>" method="GET">
+                                            <input type="hidden" >
+                                            <input type="image" value="rent" src='logo/arrow_top.png'>
+                                        </form></td>
                                 </tr>
                             <?php endforeach; ?>
 
@@ -104,7 +107,7 @@
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                                                                            <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                                                                                <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>
