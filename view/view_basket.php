@@ -51,13 +51,13 @@
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-                                            
+
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
-                                    <form class="button" action="<?php echo $book->id; ?>" method="GET">
+                                    <form class="button" action="book/basket/<?php echo $book->id; ?>" method="GET">
                                         <input type="hidden" >
-                                        <input type="image" value="Edit" src='logo/arrow_bottom.png'>
+                                        <input type="image" value="rent" src='logo/arrow_bottom.png'>
                                     </form></td>
                             </tr>
                         <?php endforeach; ?>
@@ -84,25 +84,27 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!--                     <?php foreach ($books as $book) : ?>
-                                                                                                                        <tr>
-                                                                                                                            <td><?= $book->isnb ?></td>
-                                                                                                                            <td><?= $book->title ?></td>
-                                                                                                                            <td><?= $book->author ?></td>
-                                                                                                                            <td><?= $book->editor ?></td>
-                                                                                                                            <td></td>
-                                                                                                                        </tr>
-                        <?php endforeach; ?>
-                        -->
-                    </tbody>
+                    <?php if (!$paniervide) : ?>
+                        <tbody>
+                            <?php foreach ($books_to_rent as $book) : ?>
+                                <tr>
+                                    <td><?= $book->isbn ?></td>
+                                    <td><?= $book->title ?></td>
+                                    <td><?= $book->author ?></td>
+                                    <td><?= $book->editor ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                        </tbody>
+                    <?php endif; ?>
                 </table>
                 <form methode="post" action="">              
                     <label for="user">This basket is for </label>
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                                                                    <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                                                                            <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>

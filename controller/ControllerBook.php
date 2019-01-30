@@ -11,7 +11,20 @@ class ControllerBook extends ControllerBis {
     public function basket() {
         $user = $this->get_user_or_redirect();
         $all_books = Book::get_books();
-        (new View("basket"))->show(array("user" => $user, "books" => $all_books));
+        $paniervide = true;
+        $books_to_rent='';
+        if (isset($_GET['param1'])) {
+            $paniervide = false;
+            $id = trim($_GET['param1']);
+            $book_to_rent = book::get_by_id($id);
+//            if (!$book_to_rent) {
+//                ToolsBis::abort('Unknown book');
+//            } else {
+//                $this->redirect("book", "basket");
+//            }
+            $books_to_rent[] = new Book($book_to_rent->isbn, $book_to_rent->title, $book_to_rent->author, $book_to_rent->editor, $book_to_rent->picture);
+        }
+        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "paniervide" => $paniervide, "books_to_rent" => $books_to_rent));
     }
 
     const UPLOAD_ERR_OK = 0;
@@ -83,7 +96,7 @@ class ControllerBook extends ControllerBis {
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
             "author" => $author, "editor" => $editor, "picture" => $picture_path,
-            "errors" => $errors, "view" => $view, "titlePage" => $titlePage,"is_admin" => $is_admin));
+            "errors" => $errors, "view" => $view, "titlePage" => $titlePage, "is_admin" => $is_admin));
     }
 
     public function delete_book() {
@@ -111,6 +124,23 @@ class ControllerBook extends ControllerBis {
             $this->redirect("book", "basket");
         }
         (new View("delete_book"))->show(array("user" => $user, "book_del" => $book_del, "errors" => $errors));
+    }
+
+    public function add_book_to_rent() {
+        if (ToolsBis::check_fields(['rent'])) {
+            $user = $this->get_user_or_redirect();
+            if (isset($_GET['param1'])) {
+                $id = trim($_GET['param1']);
+                $book_to_rent = book::get_by_id($id);
+                if (!$book_to_rent) {
+                    ToolsBis::abort('Unknown book');
+                }
+            } else {
+                $this->redirect("book", "basket");
+            }
+            $books_to_rent[] = new Book($book_to_rent->title, $book_to_rent->id, $book_to_rent->author, $book_to_rent->editor, $book_to_rent->picture);
+        }
+        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent));
     }
 
 }

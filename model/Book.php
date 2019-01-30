@@ -114,5 +114,4 @@ class Book extends Model {
         }
         return $errors;
     }
-
 }
