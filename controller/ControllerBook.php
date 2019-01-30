@@ -19,6 +19,7 @@ class ControllerBook extends ControllerBis {
     public function add_edit_book() {
         $errors = [];
         $user = $this->get_user_or_redirect();
+        $is_admin = $user->is_admin();
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
@@ -40,7 +41,7 @@ class ControllerBook extends ControllerBis {
             $picture_path = '';
             $titlePage = "Add new";
         }
-        if ($this->isMember()) {
+        if ($this->isMember() || $this->isManager()) {
             $view = true;
             $titlePage = "View";
         } else {
@@ -82,7 +83,7 @@ class ControllerBook extends ControllerBis {
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
             "author" => $author, "editor" => $editor, "picture" => $picture_path,
-            "errors" => $errors, "view" => $view, "titlePage" => $titlePage));
+            "errors" => $errors, "view" => $view, "titlePage" => $titlePage,"is_admin" => $is_admin));
     }
 
     public function delete_book() {
