@@ -8,6 +8,10 @@ require_once 'useful/ToolsBis.php';
 
 class ControllerRental extends ControllerBis {
 
+    
+    public function returnBook(){
+        (new View("return"))->show(array());
+    }
 
     
 }
