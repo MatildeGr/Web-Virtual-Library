@@ -57,8 +57,13 @@ class ToolsBis extends Tools {
         $d->setTimestamp($ts);
         return $d->format('Y-m-d H:i:s');
     }
-    public static function getTodayDateTime(){
+
+    public static function getTodayDateTime() {
         return date('d/m/Y H:i:s');
+    }
+
+    public static function getTodayDateTimeBdd() {
+        return date('Y/m/d H:i:s');
     }
 
     /* ======================================= */

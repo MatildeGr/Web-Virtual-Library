@@ -32,6 +32,34 @@ class Rental extends Model {
         return $results;
     }
 
+    public static function getAllRent() {
+        $query = self::execute("select * from rental ", array());
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $id = $row['book'];
+            $idUser = $row["user"];
+            $book = Book::get_by_id($id);
+            $user = User::get_user_by_id($idUser);
+            $results[] = new Rental($user, $book, $row["rentaldate"], $row["returndate"], $row["id"]);
+        }
+        return $results;
+    }
+
+    public static function getRent($idRent) {
+        $query = self::execute("select * FROM rental where id = :id", array("id" => $idRent));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            $id = $data['book'];
+            $idUser = $data["user"];
+            $book = Book::get_by_id($id);
+            $user = User::get_user_by_id($idUser);
+            return new Rental($user, $book, $data["rentaldate"], $data["returndate"], $data["id"]);
+        }
+    }
+
     public static function getMaxDuration() {
         return Configuration::get("max_time");
     }
@@ -47,5 +75,16 @@ class Rental extends Model {
         );
         return $id;
     }
+
+    public static function delRentalById($idRental) {
+        self::execute("delete FROM rental where id = :id", array("id" => $idRental));
+    }
+
+    public static function returnRental($idRental){
+        self::execute("UPDATE rental SET returndate=:returndate WHERE id=:id", 
+                array("id"=>$idRental, "returndate"=> ToolsBis::getTodayDateTimeBdd()));
+    }
+    
+    
 
 }

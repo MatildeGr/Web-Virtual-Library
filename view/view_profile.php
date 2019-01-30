@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="title"><?= $username->username ?>'s Profile!</div>
-        <?php include($menu);?>
+        <?php include($menu);?>                      
         <div class="main">
             <p>These are your currently rented books. Don't forget to return them in time!</p>
              <table class="message_list">

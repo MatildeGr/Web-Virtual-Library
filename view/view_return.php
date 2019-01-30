@@ -53,23 +53,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!--                        <?php foreach ($rentals as $rent) : ?>
-                                                        <tr>
-                                                            <td><?= $rent->rentaldate ?></td>
-                                                            <td><?= $member ?></td>
-                                                            <td><?= $book->title ?></td>
-                                                            <td><?= $rent->returndate ?></td>
-                                                            <td>  <?php if ($user->is_admin()) : ?>
-                                                                        <form class="button" action="book/delete_rent/<?php echo $book->id; ?>" method="GET">
-                                                                            <input type="image" value="delete" src='logo/garbage.png'>
-                                                                        </form>
-                            <?php endif; ?>
-                                                                <form class="button" action="book/basket/<?php echo $book->id; ?>" method="GET">
-                                                                    <input type="image" value="return" src='logo/arrow_bottom.png'> <!-- changer le logo pour coorespondre au model -->                                       
-                            </form>
-                            </td>
+                        <?php foreach ($rentals as $rent) : ?>
+                            <tr>
+                                <td><?= $rent->rentaldate ?></td>
+                                <td><?= $rent->user->username ?></td>
+                                <td><?= $rent->book->title ?></td>
+                                <td><?= $rent->returndate ?></td>
+                                <td>  <?php if ($isAdmin) : ?>
+                                        <form class="button" action="rental/deleteRental/<?php echo $rent->id; ?>" method="GET">
+                                            <input type="image" value="delete" src='logo/garbage.png'>
+                                        </form>
+                                    <?php endif; ?>
+                                    <?php if (!$rent->returndate) : ?>
+                                    <form class="button" action="rental/confirmReturn/<?php echo $rent->id; ?>" method="GET">
+                                        <input type="image" value="return" src='logo/editRent.png'>                                     
+                                    </form>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
-                        <?php endforeach; ?> -->
+                        <?php endforeach; ?> 
 
                     </tbody>
                 </table>
