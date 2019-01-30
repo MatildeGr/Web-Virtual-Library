@@ -21,11 +21,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                     <?php foreach ($books as $book) : ?>
-                        <tr>
-                            <td><?= ToolsBis::format_datetime($book->rentaldate) ?></td>
+                     <?php foreach ($books as $book) : 
+                         $rentaldate = ToolsBis::format_datetime($book->rentaldate);
+                         $returndate = ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate.Rental::getMaxDuration()));
+                         $todayDate = ToolsBis::getTodayDateTime();
+                         ?>
+                        <tr>                          
+                            <td><?= $rentaldate ?></td>
                             <td><?= $book->book->title ?></td>
-                            <td><?= ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate.Rental::getMaxDuration())) ?></td>
+                            <td style= '<?= $todayDate >= $returndate ? '' : 'color : red' ?>'><?= $returndate ?></td>
+
                         </tr>
                     <?php endforeach; ?>
 
