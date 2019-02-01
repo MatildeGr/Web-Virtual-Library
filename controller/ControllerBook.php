@@ -5,26 +5,22 @@ require_once 'model/Book.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 require_once 'useful/ToolsBis.php';
+require_once 'model/Rental.php';
 
 class ControllerBook extends ControllerBis {
 
     public function basket() {
         $user = $this->get_user_or_redirect();
-        $all_books = Book::get_books();
-        $paniervide = true;
-        $books_to_rent='';
+        $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel. 
+        $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel
+
         if (isset($_GET['param1'])) {
-            $paniervide = false;
-            $id = trim($_GET['param1']);
-            $book_to_rent = book::get_by_id($id);
-//            if (!$book_to_rent) {
-//                ToolsBis::abort('Unknown book');
-//            } else {
-//                $this->redirect("book", "basket");
-//            }
-            $books_to_rent[] = new Book($book_to_rent->isbn, $book_to_rent->title, $book_to_rent->author, $book_to_rent->editor, $book_to_rent->picture);
+            $idbook = trim($_GET['param1']);
+            Rental::add_rental($user->id, $idbook, null, null); //ajoute le book a rental avec rentaldate null car panier virtuel
+            $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel mis à jour.
+            $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel mis à jour.
         }
-        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "paniervide" => $paniervide, "books_to_rent" => $books_to_rent));
+        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent));
     }
 
     const UPLOAD_ERR_OK = 0;

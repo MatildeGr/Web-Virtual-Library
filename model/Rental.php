@@ -80,11 +80,30 @@ class Rental extends Model {
         self::execute("delete FROM rental where id = :id", array("id" => $idRental));
     }
 
-    public static function returnRental($idRental){
-        self::execute("UPDATE rental SET returndate=:returndate WHERE id=:id", 
-                array("id"=>$idRental, "returndate"=> ToolsBis::getTodayDateTimeBdd()));
+    public static function returnRental($idRental) {
+        self::execute("UPDATE rental SET returndate=:returndate WHERE id=:id", array("id" => $idRental, "returndate" => ToolsBis::getTodayDateTimeBdd()));
     }
-    
-    
+
+    //Renvoie les book qui sont dans le panier virtuel 
+    public static function getBookBasket($iduser) {
+        $query = self::execute("select book from rental where user=:user and rentaldate is null", array("user" => $iduser));
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = Book::get_by_id($row['book']);
+        }
+        return $results;
+    }
+
+    //Renvoie les book possible a ajouter au panier virtuel
+    public static function getBookYouCanRent($iduser) {
+        $query = self::execute("select id from book where id not in(select book from rental where user=:user)",array("user"=>$iduser));
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = Book::get_by_id($row['id']);
+        }
+        return $results;
+    }
 
 }
