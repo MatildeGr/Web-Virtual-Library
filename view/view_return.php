@@ -12,17 +12,17 @@
         <?php include("menu.html"); ?>
         <div class="main">
             <div class="book_list">
-                <form methode="post" action="" class="filter">              
+                <form method="POST" action="rental/returnBook" class="filter">              
                     <fieldset>
                         <legend>Filter</legend>
                         <table>
                             <tr>
                                 <td>Member:</td>
-                                <td><input type="search" name="member" id="member"/></td>
+                                <td><input type="text" name="member" id="member"/></td>
                             </tr>
                             <tr>
                                 <td>Book:</td>
-                                <td><input type="search" name="book" id="book"/></td>
+                                <td><input type="text" name="book" id="book"/></td>
                             </tr>
                             <tr>
                                 <td>Rental date:</td>
@@ -37,7 +37,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <input type="submit" name="save" value="Apply filter">
+                        <input type="submit" value="Apply filter">
                     </fieldset>
                 </form>
 

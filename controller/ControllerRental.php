@@ -13,7 +13,60 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $this->check_manager_or_admin();
         $isAdmin = $this->isAdmin();
-        $rentals = Rental::getAllRent();
+        //$rentals = Rental::getAllRent();
+        $conditions = '';
+        $filter = [];
+
+        if (isset($_GET["param1"])) {
+            $filter = ToolsBis::url_safe_decode($_GET["param1"]);
+            if (!$filter)
+                Tools::abort("Bad url parameter");
+        }
+
+        //gestion du filtre
+        if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+            if (isset($_POST['member']) && !empty($_POST['member'])) {
+                $filter[] = "user LIKE '%$_POST[member]%'";
+            }
+            if (isset($_POST['book']) && !empty($_POST['book'])) {
+                $idBook = Book::getIdBookByWord($_POST['book']);
+                $selectId = 'book in (';
+                foreach ($idBook as $id) {
+                    $selectId .= "$id";
+                }
+                $selectId .= ")";
+            }
+            if (isset($_POST['date']) && !empty($_POST['date'])) {
+                $rentalDate = ToolsBis::get_date($_POST['date']);
+                $filter[] = "rentaldate = '$rentalDate'";
+            }
+            if (isset($_POST['state']) && !empty($_POST['state'])) {
+                if ($_POST['state'] == 'all') {
+                    $filter[] = "returndate is not null or returndate is null";
+                } elseif ($_POST['state'] == 'returned') {
+                    $filter[] = "returndate is not null";
+                } elseif ($_POST['state'] == 'open') {
+                    $filter[] = " returndate is null";
+                }
+            }
+            $this->redirect("rental", "returnBook", ToolsBis::url_safe_encode($filter));
+        }
+
+        if ($filter) {
+            $first = true;
+            
+            foreach ($filter as $f) {
+                // si c'est la premiere condition, on met where, sinon on met and
+                if ($first) {
+                    $first = false;
+                    $conditions .= " WHERE $f ";
+                } else {
+                    $conditions .= " AND $f ";
+                }
+            }
+        }
+        var_dump($conditions);
+        $rentals = Rental::getRentalsByFilter($conditions);
 
         (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin));
     }
@@ -48,7 +101,7 @@ class ControllerRental extends ControllerBis {
             $rent = Rental::getRent($idRent);
             if (!$rent) {
                 ToolsBis::abort("Unknown rent");
-            }else if($rent->returndate !== null){
+            } else if ($rent->returndate !== null) {
                 ToolsBis::abort("you can not return an rental already returned");
             }
             $id = $rent->id;

@@ -24,8 +24,7 @@ class Book extends Model {
         return Configuration::get("default_picture");
     }
 
-    
-    public static function getDefaultLocation(){
+    public static function getDefaultLocation() {
         return Configuration::get("default_location");
     }
 
@@ -95,12 +94,23 @@ class Book extends Model {
         self::execute("delete FROM book where id = :id", array("id" => $id));
     }
 
+    //retourne tous les id livres comprenant le mot de recherche
+    public static function getIdBookByWord($word) {
+        $query = self::execute("SELECT id FROM book where title like :word", array("word" => "%$word%"));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return $data;
+        }
+    }
+
     public static function validateBook($id, $isbn, $title, $author, $editor) {
         $errors = [];
         $book = Book::getBookByIsbn($isbn);
         if ($book && ($book->id !== $id)) {
             $errors[] = "This ISBN is already used.";
-        }else if(!ToolsBis::check_string_length($isbn, 13, 13)){
+        } else if (!ToolsBis::check_string_length($isbn, 13, 13)) {
             $errors[] = "ISBN length must be 13 characters.";
         }
         if (empty($title)) {
@@ -114,4 +124,5 @@ class Book extends Model {
         }
         return $errors;
     }
+
 }

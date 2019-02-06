@@ -97,11 +97,25 @@ class Rental extends Model {
 
     //Renvoie les book possible a ajouter au panier virtuel
     public static function getBookYouCanRent($iduser) {
-        $query = self::execute("select id from book where id not in(select book from rental where user=:user)",array("user"=>$iduser));
+        $query = self::execute("select id from book where id not in(select book from rental where user=:user)", array("user" => $iduser));
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
             $results[] = Book::get_by_id($row['id']);
+        }
+        return $results;
+    }
+
+    public static function getRentalsByFilter($filter) {
+         $query = self::execute("select * from rental $filter ", array("filter" => $filter));
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $id = $row['book'];
+            $idUser = $row["user"];
+            $book = Book::get_by_id($id);
+            $user = User::get_user_by_id($idUser);
+            $results[] = new Rental($user, $book, $row["rentaldate"], $row["returndate"], $row["id"]);
         }
         return $results;
     }
