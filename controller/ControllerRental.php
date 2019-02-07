@@ -31,7 +31,7 @@ class ControllerRental extends ControllerBis {
             }
             if (isset($_POST['date']) && !empty($_POST['date'])) {
                 $filterRentalDate = ToolsBis::get_date($_POST['date']);
-                $filter[] = " AND (rentaldate = '$filterRentalDate' or returndate = '$filterRentalDate') ";
+                $filter[] = " AND (rentaldate = '$filterRentalDate') ";
             }
             if (isset($_POST['state']) && !empty($_POST['state'])) {
                 $filterAll = false;$filterReturn = false;$filterOpen = false;

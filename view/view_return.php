@@ -55,10 +55,10 @@
                     <tbody>
                         <?php foreach ($rentals as $rent) : ?>
                             <tr>
-                                <td><?= $rent->rentaldate ?></td>
+                                <td><?= ToolsBis::format_datetime($rent->rentaldate) ?></td>
                                 <td><?= $rent->user ?></td>
                                 <td><?= $rent->book ?></td>
-                                <td><?= $rent->returndate ?></td>
+                                <td><?= ToolsBis::format_datetime($rent->returndate) ?></td>
                                 <td>  <?php if ($isAdmin) : ?>
                                         <form class="button" action="rental/deleteRental/<?php echo $rent->id; ?>" method="GET">
                                             <input type="image" value="delete" src='logo/garbage.png'>

@@ -24,14 +24,13 @@
                     <?php
                     foreach ($books as $book) :
                         $rentaldate = ToolsBis::format_datetime($book->rentaldate);
-//                         $returndate = ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate.Rental::getMaxDuration()));
-                        $returndate = ToolsBis::format_datetime($book->returndate);
+                        $returndate = ToolsBis::format_datetime(ToolsBis::get_datetime($book->rentaldate . Rental::getMaxDuration()));
                         $todayDate = ToolsBis::getTodayDateTime();
                         ?>
                         <tr>                          
                             <td><?= $rentaldate ?></td>
                             <td><?= $book->book->title ?></td>
-                            <td style= '<?= $todayDate >= $returndate ? '' : 'color : red' ?>'><?= $returndate ?></td>
+                            <td style= '<?= $todayDate <= $returndate ? 'color : green' : 'color : red' ?>'><?= $returndate ?></td>
 
                         </tr>
                     <?php endforeach; ?>
