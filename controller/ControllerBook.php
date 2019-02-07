@@ -13,7 +13,8 @@ class ControllerBook extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel. 
         $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel
-        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent));
+        $users = User::get_users();
+        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent, "users" => $users));
     }
 
     //Ajoute un livre au panier virtuel et met à jour la view basket.
@@ -55,6 +56,7 @@ class ControllerBook extends ControllerBis {
             $picture_path = $book->picture;
             $titlePage = "Edit";
         } else {
+            $is_new = true;
             $id = null;
             $isbn = '';
             $title = '';

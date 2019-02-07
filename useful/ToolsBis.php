@@ -58,6 +58,10 @@ class ToolsBis extends Tools {
         return $d->format('Y-m-d H:i:s');
     }
 
+    public static function getTodayDate() {
+        return date('Y/m/d');
+    }
+
     public static function getTodayDateTime() {
         return date('d/m/Y H:i:s');
     }
@@ -144,7 +148,6 @@ class ToolsBis extends Tools {
 
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
-
 
     /**
 

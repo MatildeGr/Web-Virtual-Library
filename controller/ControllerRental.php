@@ -54,7 +54,7 @@ class ControllerRental extends ControllerBis {
 
         if ($filter) {
             $first = true;
-            
+
             foreach ($filter as $f) {
                 // si c'est la premiere condition, on met where, sinon on met and
                 if ($first) {
@@ -115,6 +115,17 @@ class ControllerRental extends ControllerBis {
             $this->redirect("rental", "returnBook");
         }
         (new View("confirmReturn"))->show(array("rent" => $rent));
+    }
+
+    public function confirm_basket() {
+        $user=$this->get_user_or_redirect();
+        $books_to_rent = Rental::getBookBasket($user->id);
+        $datetoday = ToolsBis::getTodayDate();
+        $returndate = $datetoday . Rental::getMaxDuration();
+        foreach ($books_to_rent as $book) {
+            Rental::add_rental($user->id, $book->id, $datetoday, $returndate);
+        }
+        $this->redirect("book", "basket");
     }
 
 }

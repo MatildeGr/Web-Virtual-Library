@@ -111,20 +111,23 @@
 
                     </tbody>
                 </table>
-                <form methode="post" action="">              
-                    <label for="user">This basket is for </label>
-                    <select name="user" id="user">
-
-                        <!--                    <?php foreach ($users as $user) : ?>
-                                                                                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
-                        <?php endforeach; ?>
-                        -->                   
-                    </select>
+                <?php if (!$user->is_member()) : ?>
+                    <form methode="post" action="">              
+                        <label for="user">This basket is for </label>
+                        <select name="user" id="user">
+                            <?php foreach ($users as $user) : ?>
+                                <option value="<?= $user->id ?>"><?= $user->username ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </form>
+                <?php endif; ?>
+                <form class="button" action="Rental/confirm_basket" method="GET">
                     <input type="submit" value="Confirm basket">
+                </form>
+                <form class='button' action='Rental/clear_basket' method='GET'>
                     <input type="submit" value="Clear Basket">
                 </form>
             </div>
-
         </div>
     </body>
 </html>

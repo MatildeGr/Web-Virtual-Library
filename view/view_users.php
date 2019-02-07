@@ -37,7 +37,7 @@
                                 </form>
                                 <?php if ($user->is_admin() && $user->id !== $usr->id): ?>
                                     <form class="button" action="user/delete/<?= $usr->id ?>" method="GET">
-                                        <input type="hidden" ">
+                                        <input type="hidden">
                                         <input type="submit" value="Delete">
                                     </form>
                                 <?php endif; ?>
