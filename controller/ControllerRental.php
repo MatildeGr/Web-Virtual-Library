@@ -120,10 +120,11 @@ class ControllerRental extends ControllerBis {
     public function confirm_basket() {
         $user=$this->get_user_or_redirect();
         $books_to_rent = Rental::getBookBasket($user->id);
-        $datetoday = ToolsBis::getTodayDate();
-        $returndate = $datetoday . Rental::getMaxDuration();
+        $datetoday = ToolsBis::getTodayDateTimeBdd();
+        $returndate = ToolsBis::format_datetimBD($datetoday.Rental::getMaxDuration());
         foreach ($books_to_rent as $book) {
             Rental::add_rental($user->id, $book->id, $datetoday, $returndate);
+             Rental::delete_basket($user->id, $book->id);
         }
         $this->redirect("book", "basket");
     }

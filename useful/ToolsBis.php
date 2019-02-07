@@ -38,6 +38,10 @@ class ToolsBis extends Tools {
     public static function format_datetime($date) {
         return $date === null ? '' : (new DateTime($date))->format('d/m/Y H:i:s');
     }
+    
+    public static function format_datetimBD($date){
+         return $date === null ? '' : (new DateTime($date))->format('Y/m/d H:i:s');
+    }
 
     public static function is_valid_date($date, $format = 'Y-m-d') {
         $d = DateTime::createFromFormat($format, $date);
@@ -56,10 +60,6 @@ class ToolsBis extends Tools {
         $d = new DateTime();
         $d->setTimestamp($ts);
         return $d->format('Y-m-d H:i:s');
-    }
-
-    public static function getTodayDate() {
-        return date('Y/m/d');
     }
 
     public static function getTodayDateTime() {
