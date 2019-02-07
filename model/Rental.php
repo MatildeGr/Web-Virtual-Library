@@ -105,17 +105,16 @@ class Rental extends Model {
         }
         return $results;
     }
-
-    public static function getRentalsByFilter($filter) {
-        $query = self::execute("select * from rental $filter ", array("filter" => $filter));
+    
+        public static function getRentalsByFilter($filter) {
+        $query = self::execute("SELECT rental.id, username,title,rentaldate,returndate "
+                . "FROM rental,book,user "
+                . "WHERE user.id = user AND book.id = book AND rentaldate IS NOT NULL"
+                . " $filter ", array());
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
-            $id = $row['book'];
-            $idUser = $row["user"];
-            $book = Book::get_by_id($id);
-            $user = User::get_user_by_id($idUser);
-            $results[] = new Rental($user, $book, $row["rentaldate"], $row["returndate"], $row["id"]);
+            $results[] = new Rental($row["username"], $row["title"], $row["rentaldate"], $row["returndate"], $row["id"]);
         }
         return $results;
     }

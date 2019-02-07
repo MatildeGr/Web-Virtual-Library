@@ -13,63 +13,60 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $this->check_manager_or_admin();
         $isAdmin = $this->isAdmin();
-        //$rentals = Rental::getAllRent();
         $conditions = '';
         $filter = [];
-
+        
         if (isset($_GET["param1"])) {
             $filter = ToolsBis::url_safe_decode($_GET["param1"]);
             if (!$filter)
                 Tools::abort("Bad url parameter");
-        }
-
-        //gestion du filtre
-        if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+        }else if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
             if (isset($_POST['member']) && !empty($_POST['member'])) {
-                $filter[] = "user LIKE '%$_POST[member]%'";
+                $filterUser = $_POST['member'];
+                $filter[] = "AND username LIKE '$filterUser%' ";
             }
             if (isset($_POST['book']) && !empty($_POST['book'])) {
-                $idBook = Book::getIdBookByWord($_POST['book']);
-                $selectId = 'book in (';
-                foreach ($idBook as $id) {
-                    $selectId .= "$id";
-                }
-                $selectId .= ")";
+                $filterBook = $_POST['book'];
+                $filter[] = " AND title LIKE '$filterBook%' ";
             }
             if (isset($_POST['date']) && !empty($_POST['date'])) {
-                $rentalDate = ToolsBis::get_date($_POST['date']);
-                $filter[] = "rentaldate = '$rentalDate'";
+                $filterRentalDate = ToolsBis::get_date($_POST['date']);
+                $filter[] = " AND (rentaldate = '$filterRentalDate' or returndate = '$filterRentalDate') ";
             }
             if (isset($_POST['state']) && !empty($_POST['state'])) {
+                $filterAll = false;$filterReturn = false;$filterOpen = false;
                 if ($_POST['state'] == 'all') {
-                    $filter[] = "returndate is not null or returndate is null";
+                    $filterAll = true;
+                    $filter[] = " AND (returndate is not null or returndate is null) ";                
                 } elseif ($_POST['state'] == 'returned') {
-                    $filter[] = "returndate is not null";
+                    $filterReturn = true;
+                    $filter[] = " AND returndate is not null ";
                 } elseif ($_POST['state'] == 'open') {
-                    $filter[] = " returndate is null";
+                    $filterOpen = true;
+                    $filter[] = " AND returndate is null ";
                 }
             }
             $this->redirect("rental", "returnBook", ToolsBis::url_safe_encode($filter));
+        }else{
+            $filterUser ='';
+            $filterBook = '';
+            $filterRentalDate =null;
+            $filterAll = false;
+            $filterReturn = false;
+            $filterOpen = false;
         }
+
 
         if ($filter) {
-            $first = true;
-
             foreach ($filter as $f) {
-                // si c'est la premiere condition, on met where, sinon on met and
-                if ($first) {
-                    $first = false;
-                    $conditions .= " WHERE $f ";
-                } else {
-                    $conditions .= " AND $f ";
-                }
+                $conditions .= " $f ";
             }
         }
-        var_dump($conditions);
         $rentals = Rental::getRentalsByFilter($conditions);
 
         (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin));
-    }
+    }//,"filterUser"=>$filterUser,"filterBook"=>$filterBook,
+         // "filterRentalDate"=>$filterRentalDate,"filterAll"=>$filterAll,"filterReturn"=>$filterReturn,"filterOpen"=>$filterOpen
 
     public function deleteRental() {
         $user = $this->get_user_or_redirect();
@@ -118,7 +115,7 @@ class ControllerRental extends ControllerBis {
     }
 
     public function confirm_basket() {
-        $user=$this->get_user_or_redirect();
+        $user = $this->get_user_or_redirect();
         $books_to_rent = Rental::getBookBasket($user->id);
         $datetoday = ToolsBis::getTodayDate();
         $returndate = $datetoday . Rental::getMaxDuration();
