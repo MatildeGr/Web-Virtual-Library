@@ -41,23 +41,20 @@
                                 <td><?= $book->editor ?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type="hidden" >
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
                                         <form class="button" action="book/delete_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type="hidden" >
                                             <input type="image" value="Edit" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
-                                    <form class="button" action="book/basket/<?php echo $book->id; ?>" method="GET">
-                                        <input type="hidden" >
-                                        <input type="image" value="rent" src='logo/arrow_bottom.png'>
+                                    <form class="button" action="book/add_basket/" method="POST">
+                                        <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                        <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
                                     </form></td>
                             </tr>
                         <?php endforeach; ?>
@@ -91,9 +88,23 @@
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>
-                                <td> <form class="button" action="book/basket/<?php echo $b->id; ?>" method="GET">
-                                        <input type="hidden" >
-                                        <input type="image" value="rent" src='logo/arrow_top.png'>
+                                <td> 
+                                    <?php if ($user->is_admin()) : ?>
+                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="image" value="Edit" src='logo/pen.png'>
+                                        </form>
+                                        <form class="button" action="book/delete_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="image" value="Edit" src='logo/garbage.png'>
+                                        </form>
+                                    <?php endif; ?>
+                                    <?php if (!$user->is_admin()) : ?>
+                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
+                                            <input type="image"  src='logo/eyes.png'>
+                                        </form>
+                                    <?php endif; ?>
+                                    <form class="button" action="book/delete_basket/" method="POST">
+                                        <input type="hidden" name='bookid' value="<?= $b->id ?>" >
+                                        <input id="backrent" type="image" value="" src='logo/arrow_top.png'>
                                     </form></td>
                             </tr>
                         <?php endforeach; ?>
@@ -105,7 +116,7 @@
                     <select name="user" id="user">
 
                         <!--                    <?php foreach ($users as $user) : ?>
-                                                                                                                    <option value="<?= $username->id ?>"><?= $username->username ?></option>
+                                                                                                                        <option value="<?= $username->id ?>"><?= $username->username ?></option>
                         <?php endforeach; ?>
                         -->                   
                     </select>

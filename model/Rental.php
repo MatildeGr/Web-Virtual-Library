@@ -19,7 +19,7 @@ class Rental extends Model {
     }
 
     public static function currently_rent($userid) {
-        $query = self::execute("select * from rental  where user = :user", array("user" => $userid));
+        $query = self::execute("select * from rental  where user = :user and rentaldate is not null", array("user" => $userid));
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
@@ -107,7 +107,7 @@ class Rental extends Model {
     }
 
     public static function getRentalsByFilter($filter) {
-         $query = self::execute("select * from rental $filter ", array("filter" => $filter));
+        $query = self::execute("select * from rental $filter ", array("filter" => $filter));
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
@@ -118,6 +118,10 @@ class Rental extends Model {
             $results[] = new Rental($user, $book, $row["rentaldate"], $row["returndate"], $row["id"]);
         }
         return $results;
+    }
+
+    public static function delete_basket($iduser, $idbook) {
+        self::execute("delete from rental where user=:user and book=:book and rentaldate is null", array("user" => $iduser, "book" => $idbook));
     }
 
 }

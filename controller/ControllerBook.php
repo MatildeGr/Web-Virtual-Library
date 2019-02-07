@@ -13,14 +13,27 @@ class ControllerBook extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel. 
         $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel
-
-        if (isset($_GET['param1'])) {
-            $idbook = trim($_GET['param1']);
-            Rental::add_rental($user->id, $idbook, null, null); //ajoute le book a rental avec rentaldate null car panier virtuel
-            $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel mis à jour.
-            $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel mis à jour.
-        }
         (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent));
+    }
+
+    //Ajoute un livre au panier virtuel et met à jour la view basket.
+    public function add_basket() {
+        $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['bookid'])) {
+            $idbook = trim($_POST['bookid']);
+            Rental::add_rental($user->id, $idbook, null, null);
+            $this->redirect("book", "basket");
+        }
+    }
+
+    //Supprime un livre du panier virtuel et met à jour la view basket.
+    public function delete_basket() {
+        $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['bookid'])) {
+            $idbook = trim($_POST['bookid']);
+            Rental::delete_basket($user->id, $idbook);
+            $this->redirect("book", "basket");
+        }
     }
 
     const UPLOAD_ERR_OK = 0;
