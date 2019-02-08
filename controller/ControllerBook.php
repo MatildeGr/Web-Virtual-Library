@@ -9,33 +9,7 @@ require_once 'model/Rental.php';
 
 class ControllerBook extends ControllerBis {
 
-    public function basket() {
-        $user = $this->get_user_or_redirect();
-        $all_books = Rental::getBookYouCanRent($user->id); //Book qu'on peut ajouter au panier virtuel. 
-        $books_to_rent = Rental::getBookBasket($user->id); //Tableau de BOOK dans le panier virtuel
-        $users = User::get_users();
-        (new View("basket"))->show(array("user" => $user, "books" => $all_books, "books_to_rent" => $books_to_rent, "users" => $users));
-    }
-
-    //Ajoute un livre au panier virtuel et met à jour la view basket.
-    public function add_basket() {
-        $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['bookid'])) {
-            $idbook = trim($_POST['bookid']);
-            Rental::add_rental($user->id, $idbook, null, null);
-            $this->redirect("book", "basket");
-        }
-    }
-
-    //Supprime un livre du panier virtuel et met à jour la view basket.
-    public function delete_basket() {
-        $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['bookid'])) {
-            $idbook = trim($_POST['bookid']);
-            Rental::delete_basket($user->id, $idbook);
-            $this->redirect("book", "basket");
-        }
-    }
+   
 
     const UPLOAD_ERR_OK = 0;
 
@@ -73,10 +47,9 @@ class ControllerBook extends ControllerBis {
         }
 
         if (ToolsBis::check_fields(['cancel'])) {
-            $this->redirect("book", "basket");
+            $this->redirect("rental", "basket");
         }
         if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor']) && !$view) {
-            //&& ($user->is_admin() || ToolsBis::check_fields(['role'])) à quoi sert elle ???
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
@@ -102,7 +75,7 @@ class ControllerBook extends ControllerBis {
                 } else {
                     Book::edit_book($id, $isbn, $title, $author, $editor, $picture_path);
                 }
-                $this->redirect("book", "basket");
+                $this->redirect("rental", "basket");
             }
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
@@ -130,9 +103,9 @@ class ControllerBook extends ControllerBis {
 
         if (isset($_POST['confirm'])) {
             Book::del_book_by_id($id);
-            $this->redirect("book", "basket");
+            $this->redirect("rental", "basket");
         } elseif (isset($_POST['cancel'])) {
-            $this->redirect("book", "basket");
+            $this->redirect("rental", "basket");
         }
         (new View("delete_book"))->show(array("user" => $user, "book_del" => $book_del, "errors" => $errors));
     }
@@ -147,7 +120,7 @@ class ControllerBook extends ControllerBis {
                     ToolsBis::abort('Unknown book');
                 }
             } else {
-                $this->redirect("book", "basket");
+                $this->redirect("rental", "basket");
             }
             $books_to_rent[] = new Book($book_to_rent->title, $book_to_rent->id, $book_to_rent->author, $book_to_rent->editor, $book_to_rent->picture);
         }

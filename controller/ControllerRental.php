@@ -9,13 +9,58 @@ require_once 'useful/ToolsBis.php';
 
 class ControllerRental extends ControllerBis {
 
+    public function basket() {
+        $user = $this->get_user_or_redirect();
+        $userselected = $user->id;
+        if (isset($_GET["param1"])) {
+            $userselected = $_GET['param1'];
+        }
+        if (isset($_POST["userselected"])) {
+            $userselected = trim($_POST["userselected"]);
+            $this->redirect("rental", "basket", $userselected);
+        }
+        $all_books = Rental::getBookYouCanRent($userselected); //Book qu'on peut ajouter au panier virtuel. 
+        $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
+        $users = User::get_users();
+        (new View("basket"))->show(array("user" => $user,
+            "books" => $all_books,
+            "books_to_rent" => $books_to_rent,
+            "users" => $users,
+            "userselected" => $userselected));
+    }
+
+    private function checkUserSelected() {
+        $user = $this->get_user_or_redirect();
+        return isset($_GET["param1"]) ? $_GET['param1'] : $user->id;
+    }
+
+    //Ajoute un livre au panier virtuel et met à jour la view basket.
+    public function add_basket() {
+        $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['bookid'])) {
+            $idbook = trim($_POST['bookid']);
+            Rental::add_rental($this->checkUserSelected(), $idbook, null, null);
+            $this->redirect("rental", "basket", $this->checkUserSelected());
+        }
+    }
+
+    //Supprime un livre du panier virtuel et met à jour la view basket.
+    public function delete_basket() {
+        $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['bookid'])) {
+            $idbook = trim($_POST['bookid']);
+            Rental::delete_basket($this->checkUserSelected(), $idbook);
+            $this->redirect("rental", "basket",$this->checkUserSelected());
+        }
+    }
+
     public function returnBook() {
         $user = $this->get_user_or_redirect();
         $this->check_manager_or_admin();
         $isAdmin = $this->isAdmin();
         $conditions = '';
         $filter = [];
-        
+
         if (isset($_GET["param1"])) {
             $filter = ToolsBis::url_safe_decode($_GET["param1"]);
             if (!$filter)
@@ -34,10 +79,12 @@ class ControllerRental extends ControllerBis {
                 $filter[] = " AND (rentaldate = '$filterRentalDate') ";
             }
             if (isset($_POST['state']) && !empty($_POST['state'])) {
-                $filterAll = false;$filterReturn = false;$filterOpen = false;
+                $filterAll = false;
+                $filterReturn = false;
+                $filterOpen = false;
                 if ($_POST['state'] == 'all') {
                     $filterAll = true;
-                    $filter[] = " AND (returndate is not null or returndate is null) ";                
+                    $filter[] = " AND (returndate is not null or returndate is null) ";
                 } elseif ($_POST['state'] == 'returned') {
                     $filterReturn = true;
                     $filter[] = " AND returndate is not null ";
@@ -47,10 +94,10 @@ class ControllerRental extends ControllerBis {
                 }
             }
             $this->redirect("rental", "returnBook", ToolsBis::url_safe_encode($filter));
-        }else{
-            $filterUser ='';
+        } else {
+            $filterUser = '';
             $filterBook = '';
-            $filterRentalDate =null;
+            $filterRentalDate = null;
             $filterAll = false;
             $filterReturn = false;
             $filterOpen = false;
@@ -65,8 +112,10 @@ class ControllerRental extends ControllerBis {
         $rentals = Rental::getRentalsByFilter($conditions);
 
         (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin));
-    }//,"filterUser"=>$filterUser,"filterBook"=>$filterBook,
-         // "filterRentalDate"=>$filterRentalDate,"filterAll"=>$filterAll,"filterReturn"=>$filterReturn,"filterOpen"=>$filterOpen
+    }
+
+//,"filterUser"=>$filterUser,"filterBook"=>$filterBook,
+    // "filterRentalDate"=>$filterRentalDate,"filterAll"=>$filterAll,"filterReturn"=>$filterReturn,"filterOpen"=>$filterOpen
 
     public function deleteRental() {
         $user = $this->get_user_or_redirect();
@@ -118,12 +167,30 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $books_to_rent = Rental::getBookBasket($user->id);
         $datetoday = ToolsBis::getTodayDateTimeBdd();
-        $returndate = ToolsBis::format_datetimBD($datetoday.Rental::getMaxDuration());
         foreach ($books_to_rent as $book) {
-            Rental::add_rental($user->id, $book->id, $datetoday, $returndate);
-             Rental::delete_basket($user->id, $book->id);
+            Rental::add_rental($user->id, $book->id, $datetoday, null);
+            Rental::delete_basket($user->id, $book->id);
         }
-        $this->redirect("book", "basket");
+        $this->redirect("rental", "basket");
+    }
+
+    public function clear_basket() {
+        $user = $this->get_user_or_redirect();
+        $books_to_rent = Rental::getBookBasket($user->id);
+        foreach ($books_to_rent as $book) {
+            Rental::delete_basket($user->id, $book->id);
+        }
+        $this->redirect("rental", "basket");
+    }
+
+    public function add_rental_for($iduser) {
+        $user = $this->get_user_or_redirect();
+        $books_to_rent = Rental::getBookBasket($user->id);
+        $datetoday = ToolsBis::getTodayDateTimeBdd();
+        foreach ($books_to_rent as $book) {
+            Rental::add_rental($iduser, $book->id, $datetoday, null);
+        }
+        $this->redirect("rental", "basket");
     }
 
 }
