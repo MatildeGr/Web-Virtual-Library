@@ -17,7 +17,7 @@ class ControllerRental extends ControllerBis {
         }
         if (isset($_POST["userselected"])) {
             $userselected = trim($_POST["userselected"]);
-            $this->redirect("rental", "basket", $userselected);
+            $this->redirect("rental", "basket", $userselected); //sil est dans le post je le met dans le get
         }
         $all_books = Rental::getBookYouCanRent($userselected); //Book qu'on peut ajouter au panier virtuel. 
         $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
@@ -31,13 +31,13 @@ class ControllerRental extends ControllerBis {
 
     private function checkUserSelected() {
         $user = $this->get_user_or_redirect();
-        return isset($_GET["param1"]) ? $_GET['param1'] : $user->id;
+        return isset($_POST["userselected"]) ? $_POST['userselected'] : $user->id;
     }
 
     //Ajoute un livre au panier virtuel et met à jour la view basket.
     public function add_basket() {
         $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['bookid'])) {
+        if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::add_rental($this->checkUserSelected(), $idbook, null, null);
             $this->redirect("rental", "basket", $this->checkUserSelected());
@@ -47,10 +47,10 @@ class ControllerRental extends ControllerBis {
     //Supprime un livre du panier virtuel et met à jour la view basket.
     public function delete_basket() {
         $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['bookid'])) {
+        if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::delete_basket($this->checkUserSelected(), $idbook);
-            $this->redirect("rental", "basket",$this->checkUserSelected());
+            $this->redirect("rental", "basket", $this->checkUserSelected());
         }
     }
 
@@ -165,32 +165,22 @@ class ControllerRental extends ControllerBis {
 
     public function confirm_basket() {
         $user = $this->get_user_or_redirect();
-        $books_to_rent = Rental::getBookBasket($user->id);
+        $books_to_rent = Rental::getBookBasket($this->checkUserSelected());
         $datetoday = ToolsBis::getTodayDateTimeBdd();
         foreach ($books_to_rent as $book) {
-            Rental::add_rental($user->id, $book->id, $datetoday, null);
-            Rental::delete_basket($user->id, $book->id);
+            Rental::add_rental($this->checkUserSelected(), $book->id, $datetoday, null);
+            Rental::delete_basket($this->checkUserSelected(), $book->id);
         }
-        $this->redirect("rental", "basket");
+        $this->redirect("rental", "basket", $iduser);
     }
 
     public function clear_basket() {
         $user = $this->get_user_or_redirect();
-        $books_to_rent = Rental::getBookBasket($user->id);
+        $books_to_rent = Rental::getBookBasket($this->checkUserSelected());
         foreach ($books_to_rent as $book) {
-            Rental::delete_basket($user->id, $book->id);
+            Rental::delete_basket($this->checkUserSelected(), $book->id);
         }
-        $this->redirect("rental", "basket");
-    }
-
-    public function add_rental_for($iduser) {
-        $user = $this->get_user_or_redirect();
-        $books_to_rent = Rental::getBookBasket($user->id);
-        $datetoday = ToolsBis::getTodayDateTimeBdd();
-        foreach ($books_to_rent as $book) {
-            Rental::add_rental($iduser, $book->id, $datetoday, null);
-        }
-        $this->redirect("rental", "basket");
+        $this->redirect("rental", "basket", $this->checkUserSelected());
     }
 
 }

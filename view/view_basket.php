@@ -40,24 +40,26 @@
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <form class="button" action="book/add_edit_book/" method="post">
+                                            <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
-                                        <form class="button" action="book/delete_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <form class="button" action="book/delete_book/" method="post">
+                                             <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
                                     <form class="button" action="rental/add_basket/" method="POST">
                                         <input type=hidden name="bookid" value="<?= $book->id ?>">
-                                        <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
                                     </form></td>
                             </tr>
@@ -69,7 +71,7 @@
             <div class='main'>
                 <?php if ($user->is_admin()) : ?>
                     <form class="button" action="book/add_edit_book/" method="GET">
-                        <input type=hidden name="userselected" value="<?= $userselected?>">
+                        <input type=hidden name="userselected" value="<?= $userselected ?>">
                         <input type="submit" value="Add book">
                     </form>
                 <?php endif; ?>
@@ -95,23 +97,25 @@
                                 <td><?= $b->editor ?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/<?php echo $b->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <form class="button" action="book/add_edit_book/" method="post">
+                                            <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
-                                        <form class="button" action="book/delete_book/<?php echo $b->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <form class="button" action="book/delete_book/" method="post">
+                                             <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?php echo $b->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
                                     <form class="button" action="rental/delete_basket/" method="POST">
-                                        <input type=hidden name="userselected" value="<?= $userselected?>">
+                                        <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input type="hidden" name='bookid' value="<?= $b->id ?>" >
                                         <input id="backrent" type="image" value="" src='logo/arrow_top.png'>
                                     </form></td>
@@ -131,10 +135,12 @@
                         <input type="submit" value="Save user selected">
                     </form>
                 <?php endif; ?>
-                <form class="button" action="Rental/confirm_basket" method="GET">
+                <form class="button" action="Rental/confirm_basket" method="POST">
+                    <input type="hidden" name="userselected" value="<?= $userselected ?>">
                     <input type="submit" value="Confirm basket">
                 </form>
-                <form class='button' action='Rental/clear_basket' method='GET'>
+                <form class='button' action='Rental/clear_basket' method='POST'>
+                    <input type="hidden" name="userselected" value="<?= $userselected ?>">
                     <input type="submit" value="Clear Basket">
                 </form>
             </div>

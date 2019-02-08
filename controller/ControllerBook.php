@@ -9,16 +9,17 @@ require_once 'model/Rental.php';
 
 class ControllerBook extends ControllerBis {
 
-   
-
     const UPLOAD_ERR_OK = 0;
 
     public function add_edit_book() {
         $errors = [];
         $user = $this->get_user_or_redirect();
         $is_admin = $user->is_admin();
-        if (isset($_GET['param1'])) {
-            $id = trim($_GET['param1']);
+        if (isset($_POST['userselected'])) {
+            $userselected = trim($_POST["userselected"]);
+        }
+        if (isset($_POST['bookid'])) {
+            $id = trim($_POST['bookid']);
             $book = Book::get_by_id($id);
             if (!$book) {
                 ToolsBis::abort('Unknown book');
@@ -47,7 +48,7 @@ class ControllerBook extends ControllerBis {
         }
 
         if (ToolsBis::check_fields(['cancel'])) {
-            $this->redirect("rental", "basket");
+            $this->redirect("rental", "basket", $userselected);
         }
         if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor']) && !$view) {
             $isbn = trim($_POST['isbn']);
@@ -75,7 +76,7 @@ class ControllerBook extends ControllerBis {
                 } else {
                     Book::edit_book($id, $isbn, $title, $author, $editor, $picture_path);
                 }
-                $this->redirect("rental", "basket");
+                $this->redirect("rental", "basket", $userselected);
             }
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
@@ -88,9 +89,11 @@ class ControllerBook extends ControllerBis {
         $this->check_admin();
         $errors = [];
         $book_del = '';
-
-        if (isset($_GET['param1'])) {
-            $id = trim($_GET['param1']);
+        if (isset($_POST['userselected'])) {
+            $userselected = trim($_POST["userselected"]);
+        }
+        if (isset($_POST['bookid']) && $_POST['bookid'] !== "") {
+            $id = trim($_POST['bookid']);
             $book_del = book::get_by_id($id);
 
             if (!$book_del) {
@@ -98,14 +101,13 @@ class ControllerBook extends ControllerBis {
             }
             $book_del = $book_del->title;
         } else {
-            $this->redirect("book", "basket");
+            $this->redirect("rental", "basket", $userselected);
         }
-
         if (isset($_POST['confirm'])) {
             Book::del_book_by_id($id);
-            $this->redirect("rental", "basket");
+            $this->redirect("rental", "basket", $userselected);
         } elseif (isset($_POST['cancel'])) {
-            $this->redirect("rental", "basket");
+            $this->redirect("rental", "basket", $userselected);
         }
         (new View("delete_book"))->show(array("user" => $user, "book_del" => $book_del, "errors" => $errors));
     }
