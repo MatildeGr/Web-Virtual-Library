@@ -40,15 +40,13 @@
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/" method="post">
-                                            <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                        <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">
                                             <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
-                                        <form class="button" action="book/delete_book/" method="post">
-                                             <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                        <form class="button" action="book/delete_book/<?= $book->id ?>" method="get">
                                             <input type=hidden name="userselected" value="<?= $userselected ?>">
-                                            <input type="image" value="Edit" src='logo/garbage.png'>
+                                            <input type="image" value="" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
@@ -97,15 +95,12 @@
                                 <td><?= $b->editor ?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/" method="post">
-                                            <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                        <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">
                                             <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
-                                        <form class="button" action="book/delete_book/" method="post">
-                                             <input type=hidden name="bookid" value="<?= $book->id ?>">
-                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
-                                            <input type="image" value="Edit" src='logo/garbage.png'>
+                                        <form class="button" action="book/delete_book/<?php echo $b->id; ?>" method="get">
+                                            <input type="image" value="" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
