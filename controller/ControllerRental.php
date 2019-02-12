@@ -13,9 +13,16 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $userselected = $user->id;
         if (isset($_GET["param1"])) {
-            $userselected = $_GET['param1'];
-        }
-        if (isset($_POST["userselected"])) {
+                    if ($user->is_admin() || $user->id == $_GET['param1']) {
+                if (User::get_user_by_id($_GET['param1'])) {
+                    $userselected = trim($_GET['param1']);
+                } else {
+                    ToolsBis::abort("Unknown User");
+                }
+            } else {
+                ToolsBis::abort("You may not order a basket for someone since you're not an admin.");
+            }
+        } elseif (isset($_POST["userselected"])) {
             $userselected = trim($_POST["userselected"]);
             $this->redirect("rental", "basket", $userselected); //sil est dans le post je le met dans le get
         }

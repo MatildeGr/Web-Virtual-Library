@@ -74,7 +74,7 @@ class ControllerUser extends ControllerBis {
             $id = trim($_GET['param1']);
             $usr = User::get_user_by_id($id);
             if (!$usr) {
-                abort('Unknown user');
+                ToolsBis::abort('Unknown user');
             }
             $username = $usr->username;
             $fullname = $usr->fullname;
