@@ -96,8 +96,8 @@ class Rental extends Model {
     }
 
 //Renvoie les book possible a ajouter au panier virtuel
-    public static function getBookByFilter($filter) {
-        $query = self::execute("SELECT id from book where id not in(select book from rental where user=2) $filter", array());
+    public static function getBookByFilter($userselected,$filter) {
+        $query = self::execute("SELECT id from book where id not in(select book from rental where user=:user) $filter", array("user"=>$userselected));
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {

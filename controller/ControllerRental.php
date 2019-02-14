@@ -44,7 +44,7 @@ class ControllerRental extends ControllerBis {
             $filterBook = ' ';
         }
 
-        $all_books = Rental::getBookByFilter($filter); //Book possible a ajouter
+        $all_books = Rental::getBookByFilter($userselected,$filter); //Book possible a ajouter
         $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
         $users = User::get_users();
         (new View("basket"))->show(array("user" => $user,

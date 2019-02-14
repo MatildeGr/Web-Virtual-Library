@@ -95,7 +95,7 @@
                                 <td><?= $b->editor ?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">
+                                        <form class="button" action="book/add_edit_book/<?= $b->id ?>" method="get">
                                             <input type=hidden name="userselected" value="<?= $userselected ?>">
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
