@@ -12,8 +12,10 @@ class ControllerRental extends ControllerBis {
     public function basket() {
         $user = $this->get_user_or_redirect();
         $userselected = $user->id;
+        $filter = ' ';
+        $conditions = ' ';
         if (isset($_GET["param1"])) {
-                    if ($user->is_admin() || $user->id == $_GET['param1']) {
+            if ($user->is_admin() || $user->id == $_GET['param1']) {
                 if (User::get_user_by_id($_GET['param1'])) {
                     $userselected = trim($_GET['param1']);
                 } else {
@@ -24,16 +26,33 @@ class ControllerRental extends ControllerBis {
             }
         } elseif (isset($_POST["userselected"])) {
             $userselected = trim($_POST["userselected"]);
-            $this->redirect("rental", "basket", $userselected); //sil est dans le post je le met dans le get
+            $this->redirect("rental", "basket", $userselected);
+        } else {
+            $this->redirect("rental", "basket", $userselected);
         }
-        $all_books = Rental::getBookYouCanRent($userselected); //Book qu'on peut ajouter au panier virtuel. 
+        if (isset($_GET['param2'])) {
+            $filter = ToolsBis::url_safe_decode($_GET['param2']);
+            if (!$filter) {
+                ToolsBis::abort("Bad url parameter");
+            }
+        }
+        if (isset($_POST['filter']) && !empty($_POST['filter'])) {
+            $filterBook = $_POST['filter'];
+            $filter = "AND title LIKE '$filterBook%' ";
+            $this->redirect("rental", "basket", $userselected, ToolsBis::url_safe_encode($filter));
+        } else {
+            $filterBook = ' ';
+        }
+
+        $all_books = Rental::getBookByFilter($filter); //Book possible a ajouter
         $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
         $users = User::get_users();
         (new View("basket"))->show(array("user" => $user,
             "books" => $all_books,
             "books_to_rent" => $books_to_rent,
             "users" => $users,
-            "userselected" => $userselected));
+            "userselected" => $userselected,
+            "filter" => $filter));
     }
 
     private function checkUserSelected() {

@@ -12,7 +12,7 @@
         <?php include("menu.html"); ?>
         <div class="main">
             <div class="book_list">
-                <form methode="post" action="" class="filter">              
+                <form method="post" action="" class="filter">              
                     <fieldset>
                         <legend>Filter</legend>
                         <label for="filter">Text filter</label>
