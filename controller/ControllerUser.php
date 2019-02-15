@@ -22,7 +22,7 @@ class ControllerUser extends ControllerBis {
             $menu = "view/menu.html";
         }
         $books = Rental::currently_rent($user->id);
-        (new View("profile"))->show(array("username" => $user, "menu" => $menu, "books"=>$books));
+        (new View("profile"))->show(array("username" => $user, "menu" => $menu, "books" => $books));
     }
 
     public function user_lst() {
@@ -116,7 +116,7 @@ class ControllerUser extends ControllerBis {
                 $role = trim($_POST['role']);
                 // si j'édite un user existant et que je mets un rôle différent d'admin alors que le rôle courant de ce user
                 // est admin, et si c'est le seul admin en base de données, alors je dois déclencher une erreur
-                if (!$is_new && $role !== 'admin' && $role === 'admin' && User::count_admins() === 1) {
+                if (!$is_new && $role !== 'admin' && $user->id == $id && User::lastadmin()) {
                     $errors[] = "You're the last admin in the system: you must keep your role";
                 }
             }
@@ -124,8 +124,9 @@ class ControllerUser extends ControllerBis {
                 // Si le user dont on a reçu l'id dans l'url est le user connecté et si son rôle ou son username ont changé,
                 // mettre à jour la session en reloguant l'utilisateur, sans faire de redirection (4ème paramètre de log_user).
                 if (!$is_new && $id === $user->id && ($username != $user->username || $role != $user->role)) {
-                     //$this->redirect("user", "profile");/// GROS SOUCIS ICI J'ARRIVE PAS :)))
-                     //Controller::log_user($logged_userid, $username, $role, false);
+
+                    Controller::log_user(new User($user->fullname, $user->username, $user->password, $user->email, $role, $user->birthdate, $user->id));
+                    $this->redirect("user", "profile");
                 }
                 if ($is_new) {
                     if ($user->is_admin()) {

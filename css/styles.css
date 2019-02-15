@@ -63,10 +63,13 @@ form * {
     font-size: 11pt;
 }
 
-.message_list th, .message_list td {
+.message_list th, .message_list td{
     border: 1px solid black;
     padding-left: 5px;
     padding-right: 5px;
+}
+.message_list button{
+    diplay: inline-block;
 }
 
 textarea {
@@ -87,13 +90,13 @@ form.link {
 
 form.link input[type="submit"] {
     background:none!important;
-     border:none; 
-     padding:0!important;
-     font: inherit;
-     color: blue;
-     text-decoration: underline;
-     
-     cursor: pointer;
+    border:none; 
+    padding:0!important;
+    font: inherit;
+    color: blue;
+    text-decoration: underline;
+
+    cursor: pointer;
 }
 
 form.button {

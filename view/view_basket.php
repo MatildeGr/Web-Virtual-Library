@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="title">Basket</div>
-        <?php include("menu.html"); ?>
+        <?php include($menu); ?>
         <div class="main">
             <div class="book_list">
                 <form method="post" action="" class="filter">              
@@ -20,8 +20,6 @@
                         <input type="submit" value="Apply filter">
                     </fieldset>
                 </form>
-
-
                 <table class="message_list">
                     <thead>
                         <tr>
@@ -35,31 +33,30 @@
                     <tbody>
                         <?php foreach ($books as $book) : ?>
                             <tr>
-                                <td><?= $book->isbn ?></td>
+                                <td><?= ToolsBis::formatISBN($book->isbn) ?></td>
                                 <td><?= $book->title ?></td>
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">
-                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
+                                        <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">                                            
                                             <input type="image" value="Edit" src='logo/pen.png'>
                                         </form>
-                                        <form class="button" action="book/delete_book/<?= $book->id ?>" method="get">
-                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
+                                        <form class="button" action="book/delete_book/<?= $book->id ?>" method="get">                                           
                                             <input type="image" value="" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$user->is_admin()) : ?>
-                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">
-                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
+                                        <form class="button" action="book/add_edit_book/<?php echo $book->id; ?>" method="GET">                                           
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
+                                    <?php if($checkRent) : ?>
                                     <form class="button" action="rental/add_basket/" method="POST">
                                         <input type=hidden name="bookid" value="<?= $book->id ?>">
                                         <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
                                     </form></td>
+                                    <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
 
@@ -69,7 +66,6 @@
             <div class='main'>
                 <?php if ($user->is_admin()) : ?>
                     <form class="button" action="book/add_edit_book/" method="GET">
-                        <input type=hidden name="userselected" value="<?= $userselected ?>">
                         <input type="submit" value="Add book">
                     </form>
                 <?php endif; ?>
@@ -89,7 +85,7 @@
                     <tbody>
                         <?php foreach ($books_to_rent as $b) : ?>
                             <tr>
-                                <td><?= $b->isbn ?></td>
+                                <td><?= ToolsBis::formatISBN($b->isbn)  ?></td>
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>

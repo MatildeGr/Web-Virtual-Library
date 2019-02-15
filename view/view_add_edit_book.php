@@ -15,7 +15,7 @@
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
-                        <td><input id="isbn" name="isbn" type="text" value="<?php echo $isbn ?>"  <?= $is_admin ? '' : 'disabled' ?>></td>
+                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?>></td>
                     </tr>
                     <tr>
                         <td>Title(*):</td>
@@ -32,18 +32,18 @@
                     <tr>
                         <td>Picture:</td>
                         <?php if (!$view): ?>
-                        <td><input id="picture" name="picture" type="file" accept="image/x-png, image/gif, image/jpeg"></td>
-                        <?php endif; ?>
+                            <td><input id="picture" name="picture" type="file" accept="image/x-png, image/gif, image/jpeg"></td>
+                            <?php endif; ?>
                     </tr>
                     <tr>
                         <td></td>
                         <?php if ($picture): ?>
-                        <td><img src='<?php echo $picture ?> ?>' width="150" alt="Book image"></td>
-                    <?php endif; ?>
+                            <td><img src='<?php echo $picture ?> ?>' width="150" alt="Book image"></td>
+                        <?php endif; ?>
                     </tr>
                 </table>
                 <?php if (!$view): ?>
-                <input type="submit" name="save" value="Save">
+                    <input type="submit" name="save" value="Save">
                 <?php endif; ?>
                 <input type="submit" name="cancel" value="Cancel">
             </form>

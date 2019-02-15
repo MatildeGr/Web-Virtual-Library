@@ -13,16 +13,20 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $userselected = $user->id;
         $filter = ' ';
-        $conditions = ' ';
+        if (!($user->is_admin()) && !($user->is_manager())) {
+            $menu = "view/menu_member.html";
+        } else {
+            $menu = "view/menu.html";
+        }
         if (isset($_GET["param1"])) {
-            if ($user->is_admin() || $user->id == $_GET['param1']) {
+            if ($user->is_admin() || $user->is_manager() || $user->id == $_GET['param1']) {
                 if (User::get_user_by_id($_GET['param1'])) {
                     $userselected = trim($_GET['param1']);
                 } else {
                     ToolsBis::abort("Unknown User");
                 }
             } else {
-                ToolsBis::abort("You may not order a basket for someone since you're not an admin.");
+                ToolsBis::abort("You may not order a basket for someone since you're not an admin or manager.");
             }
         } elseif (isset($_POST["userselected"])) {
             $userselected = trim($_POST["userselected"]);
@@ -43,8 +47,8 @@ class ControllerRental extends ControllerBis {
         } else {
             $filterBook = ' ';
         }
-
-        $all_books = Rental::getBookByFilter($userselected,$filter); //Book possible a ajouter
+        $checkRent = Rental::checkhowmanyrent($userselected);
+        $all_books = Rental::getBookByFilter($userselected, $filter); //Book possible a ajouter
         $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
         $users = User::get_users();
         (new View("basket"))->show(array("user" => $user,
@@ -52,7 +56,9 @@ class ControllerRental extends ControllerBis {
             "books_to_rent" => $books_to_rent,
             "users" => $users,
             "userselected" => $userselected,
-            "filter" => $filter));
+            "filter" => $filter,
+            "menu" => $menu,
+            "checkRent" => $checkRent));
     }
 
     private function checkUserSelected() {

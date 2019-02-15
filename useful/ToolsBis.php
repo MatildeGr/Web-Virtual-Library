@@ -38,9 +38,9 @@ class ToolsBis extends Tools {
     public static function format_datetime($date) {
         return $date === null ? '' : (new DateTime($date))->format('d/m/Y H:i:s');
     }
-    
-    public static function format_datetimBD($date){
-         return $date === null ? '' : (new DateTime($date))->format('Y/m/d H:i:s');
+
+    public static function format_datetimBD($date) {
+        return $date === null ? '' : (new DateTime($date))->format('Y/m/d H:i:s');
     }
 
     public static function is_valid_date($date, $format = 'Y-m-d') {
@@ -199,6 +199,13 @@ class ToolsBis extends Tools {
     public static function url_safe_decode($data) {
 
         return json_decode(@gzuncompress(self::base64url_decode($data)), true, 512, JSON_OBJECT_AS_ARRAY);
+    }
+
+    public static function formatISBN($isbn) {
+        $isbn = substr_replace($isbn, "-", 3, 0);
+        $isbn = substr_replace($isbn, "-", 5, 0);
+        $isbn = substr_replace($isbn, "-", 10, 0);
+        return $isbn;
     }
 
 }

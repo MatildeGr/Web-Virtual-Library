@@ -32,6 +32,7 @@ class Book extends Model {
         if (empty($picture)) {
             $picture = Book::getDefaultPicture();
         }
+        $isbn = str_replace("-", "", $isbn);
         $id = self::execute("INSERT INTO book (isbn, title, author, editor, picture) 
                 VALUES (:isbn,:title,:author,:editor,:picture)", array(
                     "isbn" => $isbn,
@@ -44,19 +45,8 @@ class Book extends Model {
         return $id;
     }
 
-//renvoie la liste de book
-    public static function get_books() {
-        $query = self::execute("SELECT * FROM book", array());
-        $data = $query->fetchAll();
-        $results = [];
-        foreach ($data as $row) {
-            $results[] = new Book($row["isbn"], $row["title"], $row["author"], $row["editor"], $row["picture"], $row["id"]);
-        }
-        return $results;
-    }
-
     public static function edit_book($id, $isbn, $title, $author, $editor, $picture) {
-// if (validate_isbn($isbn)) {
+        $isbn = str_replace("-", "", $isbn);
         $id = self::execute("UPDATE book SET isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture
                 WHERE id=:id", array(
                     "isbn" => $isbn,
@@ -67,7 +57,6 @@ class Book extends Model {
                     "id" => $id
                         )
         );
-//}
     }
 
     public static function get_by_id($id) {
@@ -110,9 +99,12 @@ class Book extends Model {
         $book = Book::getBookByIsbn($isbn);
         if ($book && ($book->id !== $id)) {
             $errors[] = "This ISBN is already used.";
-        } else if (!ToolsBis::check_string_length($isbn, 13, 13)) {
+        } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {
+            $errors[] = "ISBN must contains only numbers.";
+        } else if (!ToolsBis::check_string_length(str_replace("-", "", $isbn), 13, 13)) {
             $errors[] = "ISBN length must be 13 characters.";
         }
+        var_dump($isbn);
         if (empty($title)) {
             $errors[] = "Title is required.";
         }

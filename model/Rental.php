@@ -96,8 +96,8 @@ class Rental extends Model {
     }
 
 //Renvoie les book possible a ajouter au panier virtuel
-    public static function getBookByFilter($userselected,$filter) {
-        $query = self::execute("SELECT id from book where id not in(select book from rental where user=:user) $filter", array("user"=>$userselected));
+    public static function getBookByFilter($userselected, $filter) {
+        $query = self::execute("SELECT id from book where id not in(select book from rental where user=:user) $filter", array("user" => $userselected));
         $data = $query->fetchAll();
         $results = [];
         foreach ($data as $row) {
@@ -125,6 +125,17 @@ class Rental extends Model {
 
     public static function delete_bookrental($idbook) {
         self::execute("delete from rental where book=:book", array("book" => $idbook));
+    }
+
+    public static function getMaxLocation() {
+        return Configuration::get('max_location');
+    }
+
+    //fonction qui renvoie true s'il est possible d'ajouter des livres au panier. 
+    public static function checkhowmanyrent($iduser) {
+        $query = self::execute("SELECT count(*) from rental where user=:user", array("user" => $iduser));
+        $data = $query->fetch();
+        return (int)$data[0] < Rental::getMaxLocation();
     }
 
 }

@@ -74,7 +74,6 @@ class User extends Model {
         return $results;
     }
 
-
     //renvoie un tableau d'erreur(s) 
     //le tableau est vide s'il n'y a pas d'erreur.
     public static function validate_login($username, $password) {
@@ -96,18 +95,15 @@ class User extends Model {
         return count($result);
     }
 
-
     public static function del_user_by_id($id) {
         self::execute("delete FROM user where id = :id", array("id" => $id));
     }
 
-    public static function count_admins() {
-        $query = self::execute("SELECT count(*) from user where role='admin'");
+    public static function lastadmin() {
+        $query = self::execute("SELECT count(*) from user where role='admin'",array());
         $result = $query->fetch();
-        return count($result);
+        return (int) $result[0] == 1;
     }
-
-// CETTE FONCTION MERDE COMPLET...
 
     public static function validate_user($id, $username, $password, $password_confirm, $fullname, $email, $birthdate) {
         $errors = [];
