@@ -10,14 +10,16 @@ class Book extends Model {
     public $author;
     public $editor;
     public $picture;
+    public $nbCopies;
 
-    public function __construct($isbn, $title, $author, $editor, $picture, $id = null) {
+    public function __construct($isbn, $title, $author, $editor, $picture, $id = null, $nbCopies = 1) {
         $this->id = $id;
         $this->isbn = $isbn;
         $this->title = $title;
         $this->author = $author;
         $this->editor = $editor;
         $this->picture = $picture;
+        $this->nbCopies = $nbCopies;
     }
 
     public static function getDefaultPicture() {
@@ -28,32 +30,34 @@ class Book extends Model {
         return Configuration::get("default_location");
     }
 
-    public static function add_book($isbn, $title, $author, $editor, $picture) {
+    public static function add_book($isbn, $title, $author, $editor, $picture, $copy) {
         if (empty($picture)) {
             $picture = Book::getDefaultPicture();
         }
         $isbn = str_replace("-", "", $isbn);
-        $id = self::execute("INSERT INTO book (isbn, title, author, editor, picture) 
-                VALUES (:isbn,:title,:author,:editor,:picture)", array(
+        $id = self::execute("INSERT INTO book (isbn, title, author, editor, picture,nbCopies) 
+                VALUES (:isbn,:title,:author,:editor,:picture,:nbCopies)", array(
                     "isbn" => $isbn,
                     "title" => $title,
                     "author" => $author,
                     "editor" => $editor,
                     "picture" => $picture,
+                    "nbCopies" => $copy,
                         ), true// genere l'id du book ajouté
         );
         return $id;
     }
 
-    public static function edit_book($id, $isbn, $title, $author, $editor, $picture) {
+    public static function edit_book($id, $isbn, $title, $author, $editor, $picture, $nbCopies) {
         $isbn = str_replace("-", "", $isbn);
-        $id = self::execute("UPDATE book SET isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture
+        $id = self::execute("UPDATE book SET isbn=:isbn, title=:title, author=:author, editor=:editor, picture=:picture,nbCopies=:nbCopies
                 WHERE id=:id", array(
                     "isbn" => $isbn,
                     "title" => $title,
                     "author" => $author,
                     "editor" => $editor,
                     "picture" => $picture,
+                    "nbCopies" => $nbCopies,
                     "id" => $id
                         )
         );
@@ -65,7 +69,7 @@ class Book extends Model {
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new Book($data["isbn"], $data["title"], $data["author"], $data["editor"], $data["picture"], $data["id"]);
+            return new Book($data["isbn"], $data["title"], $data["author"], $data["editor"], $data["picture"], $data["id"], $data["nbCopies"]);
         }
     }
 
@@ -94,7 +98,7 @@ class Book extends Model {
         }
     }
 
-    public static function validateBook($id, $isbn, $title, $author, $editor) {
+    public static function validateBook($id, $isbn, $title, $author, $editor, $nbCopies) {
         $errors = [];
         $book = Book::getBookByIsbn($isbn);
         if ($book && ($book->id !== $id)) {
@@ -104,7 +108,9 @@ class Book extends Model {
         } else if (!ToolsBis::check_string_length(str_replace("-", "", $isbn), 13, 13)) {
             $errors[] = "ISBN length must be 13 characters.";
         }
-        var_dump($isbn);
+        if ($nbCopies < 1) {
+            $errors[] = "Copies cannot be a negative number or 0.";
+        }
         if (empty($title)) {
             $errors[] = "Title is required.";
         }
@@ -115,6 +121,31 @@ class Book extends Model {
             $errors[] = "Editor is required.";
         }
         return $errors;
+    }
+
+    //Renvoie le nombre de copie d'un book 
+    public static function getCopy($idBook) {
+        $query = self::execute("SELECT nbCopies from book where id=:id", array("id" => $idBook));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return (int) $data[0];
+        }
+    }
+
+    //Ajoute une copie d'un book
+    public static function updateCopyPlus($idBook) {
+        $nbCopy = Book::getCopy($idBook);
+        $nbCopies = $nbCopy - 1;
+        self::execute("UPDATE book SET nbCopies=:nbCopies where id=:id", array("id" => $idBook, "nbCopies" => $nbCopies));
+    }
+
+    //Enlève une copie d'un book
+    public static function updateCopyMinus($idBook) {
+        $nbCopy = Book::getCopy($idBook);
+        $nbCopies = $nbCopy + 1;
+        self::execute("UPDATE book SET nbCopies=:nbCopies where id=:id", array("id" => $idBook, "nbCopies" => $nbCopies));
     }
 
 }

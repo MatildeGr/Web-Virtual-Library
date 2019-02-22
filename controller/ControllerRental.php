@@ -71,7 +71,12 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
+            if(Book::getCopy($idbook)<1){
+                ToolsBis::abort("This book is not avalaible");
+              
+            }
             Rental::add_rental($this->checkUserSelected(), $idbook, null, null);
+            Book::updateCopyPlus($idbook);
             $this->redirect("rental", "basket", $this->checkUserSelected());
         }
     }
@@ -82,6 +87,7 @@ class ControllerRental extends ControllerBis {
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::delete_basket($this->checkUserSelected(), $idbook);
+            Book::updateCopyMinus($idbook);
             $this->redirect("rental", "basket", $this->checkUserSelected());
         }
     }

@@ -36,7 +36,8 @@ CREATE TABLE `book` (
   `title` varchar(255) NOT NULL,
   `author` varchar(255) NOT NULL,
   `editor` varchar(255) NOT NULL,
-  `picture` varchar(255) DEFAULT NULL
+  `picture` varchar(255) DEFAULT NULL,
+  `nbCopies` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

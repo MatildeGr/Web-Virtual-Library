@@ -41,6 +41,10 @@
                             <td><img src='<?php echo $picture ?> ?>' width="150" alt="Book image"></td>
                         <?php endif; ?>
                     </tr>
+                    <tr>
+                        <td>Avalaible Copies: </td>
+                        <td><input id="copies" name="nbCopies" type="number" value="<?php echo $nbCopies?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
+                    </tr>
                 </table>
                 <?php if (!$view): ?>
                     <input type="submit" name="save" value="Save">

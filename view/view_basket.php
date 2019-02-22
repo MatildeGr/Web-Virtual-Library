@@ -27,6 +27,7 @@
                             <th>Title</th>
                             <th>Author</th>
                             <th>Editor</th>
+                            <th>Avalaible Copies</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -37,6 +38,7 @@
                                 <td><?= $book->title ?></td>
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
+                                <td><?= $book->nbCopies?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">                                            
                                             <input type="image" value="Edit" src='logo/pen.png'>
@@ -56,6 +58,7 @@
                                         <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
                                     </form></td>
+                                    
                                     <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
@@ -79,6 +82,7 @@
                             <th>Title</th>
                             <th>Author</th>
                             <th>Editor</th>
+                            <th>Avalaible Copies</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -89,6 +93,7 @@
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>
+                                <td><?= $b->nbCopies?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $b->id ?>" method="get">

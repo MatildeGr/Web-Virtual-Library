@@ -29,6 +29,7 @@ class ControllerBook extends ControllerBis {
             $author = $book->author;
             $editor = $book->editor;
             $picture_path = $book->picture;
+            $nbCopies = $book->nbCopies;
             $titlePage = "Edit";
         } else {
             $is_new = true;
@@ -39,6 +40,7 @@ class ControllerBook extends ControllerBis {
             $editor = '';
             $picture_path = '';
             $titlePage = "Add new";
+            $nbCopies = 1;
         }
         if ($this->isMember() || $this->isManager()) {
             $view = true;
@@ -50,12 +52,13 @@ class ControllerBook extends ControllerBis {
         if (ToolsBis::check_fields(['cancel'])) {
             $this->redirect("rental", "basket", $userselected);
         }
-        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor']) && !$view) {
+        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'nbCopies']) && !$view) {
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
-            $errors = Book::validateBook($id, $isbn, $title, $author, $editor);
+            $nbCopies = trim($_POST['nbCopies']);
+            $errors = Book::validateBook($id, $isbn, $title, $author, $editor, $nbCopies);
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
                 $errors = ToolsBis::validate_photo($_FILES['picture']);
                 if (empty($errors)) {
@@ -72,15 +75,15 @@ class ControllerBook extends ControllerBis {
 
             if (count($errors) === 0) {
                 if ($is_new) {
-                    Book::add_book($isbn, $title, $author, $editor, $picture_path);
+                    Book::add_book($isbn, $title, $author, $editor, $picture_path, $nbCopies);
                 } else {
-                    Book::edit_book($id, $isbn, $title, $author, $editor, $picture_path);
+                    Book::edit_book($id, $isbn, $title, $author, $editor, $picture_path, $nbCopies);
                 }
                 $this->redirect("rental", "basket", $userselected);
             }
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
-            "author" => $author, "editor" => $editor, "picture" => $picture_path,
+            "author" => $author, "editor" => $editor, "picture" => $picture_path, "nbCopies" => $nbCopies,
             "errors" => $errors, "view" => $view, "titlePage" => $titlePage, "is_admin" => $is_admin));
     }
 
