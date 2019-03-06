@@ -60,7 +60,7 @@ class ControllerRental extends ControllerBis {
             "menu" => $menu,
             "checkRent" => $checkRent));
     }
-
+    
     private function checkUserSelected() {
         $user = $this->get_user_or_redirect();
         return isset($_POST["userselected"]) ? $_POST['userselected'] : $user->id;
@@ -76,7 +76,7 @@ class ControllerRental extends ControllerBis {
               
             }
             Rental::add_rental($this->checkUserSelected(), $idbook, null, null);
-            Book::updateCopyPlus($idbook);
+            //Book::updateCopyPlus($idbook);
             $this->redirect("rental", "basket", $this->checkUserSelected());
         }
     }
@@ -87,7 +87,7 @@ class ControllerRental extends ControllerBis {
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::delete_basket($this->checkUserSelected(), $idbook);
-            Book::updateCopyMinus($idbook);
+            //Book::updateCopyMinus($idbook);
             $this->redirect("rental", "basket", $this->checkUserSelected());
         }
     }

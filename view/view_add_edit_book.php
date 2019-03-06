@@ -42,7 +42,7 @@
                         <?php endif; ?>
                     </tr>
                     <tr>
-                        <td>Avalaible Copies: </td>
+                        <td>Copies: </td>
                         <td><input id="copies" name="nbCopies" type="number" value="<?php echo $nbCopies?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
                     </tr>
                 </table>

@@ -44,14 +44,14 @@ CREATE TABLE `book` (
 -- Déchargement des données de la table `book`
 --
 
-INSERT INTO `book` (`id`, `isbn`, `title`, `author`, `editor`, `picture`) VALUES
-(5, '2266130692000', 'La Bible de Jérusalem', 'Jesus', 'POCKET', 'picture/default_picture.jpg'),
-(6, '2070408507000', 'Le Petit Prince', 'Saint-Exupéry', 'GALLIMARD', 'picture/default_picture.jpg'),
-(7, '2266154117000', 'Le Seigneur des Anneaux, Tome 1 : La Communauté de l\'Anneau', 'Tolkien', 'POCKET', 'picture/default_picture.jpg'),
-(8, '2210758815000', 'Vingt mille lieues sous les mers', 'Jules Verne', 'MAGNARD', 'picture/default_picture.jpg'),
-(9, '2253001279000', 'Journal d\'Anne Frank', 'Isabelle Rosselin', 'LE LIVRE DE POCHE', 'picture/default_picture.jpg'),
-(10, '2812902795000', 'Fables de Jean de la Fontaine', 'Jean de La Fontaine', 'EDITIONS DE BORÉE', 'picture/default_picture.jpg'),
-(11, '2709650185000', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg');
+INSERT INTO `book` (`id`, `isbn`, `title`, `author`, `editor`, `picture`,`nbCopies`) VALUES
+(5, '2266130692000', 'La Bible de Jérusalem', 'Jesus', 'POCKET', 'picture/default_picture.jpg', 10),
+(6, '2070408507000', 'Le Petit Prince', 'Saint-Exupéry', 'GALLIMARD', 'picture/default_picture.jpg', 20),
+(7, '2266154117000', 'Le Seigneur des Anneaux, Tome 1 : La Communauté de l\'Anneau', 'Tolkien', 'POCKET', 'picture/default_picture.jpg', 15),
+(8, '2210758815000', 'Vingt mille lieues sous les mers', 'Jules Verne', 'MAGNARD', 'picture/default_picture.jpg', 5),
+(9, '2253001279000', 'Journal d\'Anne Frank', 'Isabelle Rosselin', 'LE LIVRE DE POCHE', 'picture/default_picture.jpg', 3),
+(10, '2812902795000', 'Fables de Jean de la Fontaine', 'Jean de La Fontaine', 'EDITIONS DE BORÉE', 'picture/default_picture.jpg', 25),
+(11, '2709650185000', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg', 30);
 
 -- --------------------------------------------------------
 

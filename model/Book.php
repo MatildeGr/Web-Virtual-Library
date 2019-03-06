@@ -101,12 +101,16 @@ class Book extends Model {
     public static function validateBook($id, $isbn, $title, $author, $editor, $nbCopies) {
         $errors = [];
         $book = Book::getBookByIsbn($isbn);
+        $numberBooked = Rental::numberBookedOrRent($id);
         if ($book && ($book->id !== $id)) {
             $errors[] = "This ISBN is already used.";
         } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {
             $errors[] = "ISBN must contains only numbers.";
         } else if (!ToolsBis::check_string_length(str_replace("-", "", $isbn), 13, 13)) {
             $errors[] = "ISBN length must be 13 characters.";
+        }
+        if ($nbCopies < $numberBooked) {
+            $errors[] = "Copies must remain greater than or equal to the number of copies currently reserved or rented which is $numberBooked ";
         }
         if ($nbCopies < 1) {
             $errors[] = "Copies cannot be a negative number or 0.";

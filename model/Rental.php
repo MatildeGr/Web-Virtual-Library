@@ -135,7 +135,28 @@ class Rental extends Model {
     public static function checkhowmanyrent($iduser) {
         $query = self::execute("SELECT count(*) from rental where user=:user", array("user" => $iduser));
         $data = $query->fetch();
-        return (int)$data[0] < Rental::getMaxLocation();
+        return (int) $data[0] < Rental::getMaxLocation();
+    }
+
+    //Renvoie le nombre de copies actuellement réservées ou louées d'un livre.
+    public static function numberBookedOrRent($idbook) {
+        $query = self::execute("SELECT count(*) from rental where book=:book", array("book" => $idbook));
+        $data = $query->fetch();
+        return (int) $data[0];
+    }
+
+    //Renvoie le nombre de copies d'un book
+    public static function getNbCopies($idbook) {
+        $query = self::execute("SELECT nbCopies from book where id=:id", array("id" => $idbook));
+        $data = $query->fetch();
+        return (int) $data;
+    }
+
+    //Renvoie true si le book est disponible. 
+    public static function checkBookAvalaible($idbook) {
+        $numberBooked = Rental::numberBookedOrRent($idbook);
+        $book = Book::get_by_id($idbook);
+        return $book->nbCopies - $numberBooked != 0;
     }
 
 }

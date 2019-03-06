@@ -38,7 +38,7 @@
                                 <td><?= $book->title ?></td>
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
-                                <td><?= $book->nbCopies?></td>
+                                <td><?= $book->nbCopies - Rental::numberBookedOrRent($book->id)?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">                                            
                                             <input type="image" value="Edit" src='logo/pen.png'>
@@ -52,7 +52,7 @@
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
-                                    <?php if($checkRent) : ?>
+                                    <?php if($checkRent && Rental::checkBookAvalaible($book->id)) : ?>
                                     <form class="button" action="rental/add_basket/" method="POST">
                                         <input type=hidden name="bookid" value="<?= $book->id ?>">
                                         <input type=hidden name="userselected" value="<?= $userselected ?>">
@@ -93,7 +93,7 @@
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>
-                                <td><?= $b->nbCopies?></td>
+                                <td><?= $b->nbCopies - Rental::numberBookedOrRent($book->id)?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $b->id ?>" method="get">
