@@ -30,7 +30,7 @@
                         <tr>                          
                             <td><?= $rentaldate ?></td>
                             <td><?= $book->book->title ?></td>
-                            <td style= '<?= $todayDate <= $returndate ? 'color : green' : 'color : red' ?>'><?= $returndate ?></td>
+                            <td style= '<?= $todayDate > $returndate ? 'color : green' : 'color : red' ?>'><?= $returndate ?></td>
 
                         </tr>
                     <?php endforeach; ?>
