@@ -79,6 +79,10 @@ class Rental extends Model {
     public static function delRentalById($idRental) {
         self::execute("delete FROM rental where id = :id", array("id" => $idRental));
     }
+    
+    public static function delRentalByUserId($idUser){
+        self::execute("delete FROM rental where user = :user", array("user" => $idUser));
+    }
 
     public static function returnRental($idRental) {
         self::execute("UPDATE rental SET returndate=:returndate WHERE id=:id", array("id" => $idRental, "returndate" => ToolsBis::getTodayDateTimeBdd()));

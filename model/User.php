@@ -96,6 +96,7 @@ class User extends Model {
     }
 
     public static function del_user_by_id($id) {
+        Rental::delRentalByUserId($id);
         self::execute("delete FROM user where id = :id", array("id" => $id));
     }
 
