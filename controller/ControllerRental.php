@@ -98,19 +98,18 @@ class ControllerRental extends ControllerBis {
         $isAdmin = $this->isAdmin();
         $conditions = '';
         $filter = [];
+        $filterUser = '';
 
         if (isset($_GET["param1"])) {
             $filter = ToolsBis::url_safe_decode($_GET["param1"]);
-            if (!$filter)
-                Tools::abort("Bad url parameter");
         }else if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
             if (isset($_POST['member']) && !empty($_POST['member'])) {
                 $filterUser = $_POST['member'];
-                $filter[] = "AND username LIKE '$filterUser%' ";
+                $filter[] = "AND username LIKE '%$filterUser%' ";
             }
             if (isset($_POST['book']) && !empty($_POST['book'])) {
                 $filterBook = $_POST['book'];
-                $filter[] = " AND title LIKE '$filterBook%' ";
+                $filter[] = " AND title LIKE '%$filterBook%' ";
             }
             if (isset($_POST['date']) && !empty($_POST['date'])) {
                 $filterRentalDate = ToolsBis::get_date($_POST['date']);
@@ -149,7 +148,7 @@ class ControllerRental extends ControllerBis {
         }
         $rentals = Rental::getRentalsByFilter($conditions);
 
-        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin));
+        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin,"filterUser"=>$filterUser));
     }
 
 //,"filterUser"=>$filterUser,"filterBook"=>$filterBook,
