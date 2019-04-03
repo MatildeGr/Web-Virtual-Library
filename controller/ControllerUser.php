@@ -110,7 +110,7 @@ class ControllerUser extends ControllerBis {
             if ($is_new) {
                 $password = $username;
             }
-            $errors = User::validate_user($id, $username, $password, $password, $fullname, $email, $birthdate);
+            $errors = (new User( $fullname, $username, $password, $email, $role, $birthdate, $id ))->validate_user();
 
             if ($is_admin) {
                 $role = trim($_POST['role']);
@@ -147,6 +147,11 @@ class ControllerUser extends ControllerBis {
         }
         (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname,
             "email" => $email, "birthdate" => $birthdate, "role" => $role, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
+    }
+    
+    
+    private function isPasswordConfirmed($password,$confirmpassword){
+                return $password == $confirmpassword; 
     }
 
 }

@@ -20,7 +20,6 @@ class ControllerMain extends ControllerBis {
             if (empty($errors)) {
                 $this->log_user(User::get_user_by_username($username));
             }
-
         }
         (new View("login"))->show(array("username" => $username, "password" => $password, "errors" => $errors));
     }
@@ -40,7 +39,11 @@ class ControllerMain extends ControllerBis {
             $password_confirm = trim($_POST['password_confirm']);
             $email = trim($_POST['email']);
             $birthdate = trim($_POST['birthdate']);
-            $errors = User::validate_user(null, $username, $password, $password_confirm, $fullname, $email, $birthdate);
+            if ($password !== $password_confirm) {
+                $errors = "You have to enter twice the same password.";
+            }
+            $errors = (new User($fullname, $username, $password, $email, null, $birthdate, null))->validate_user();
+
             if (count($errors) == 0) {
                 User::add_user($username, $password, $fullname, $email, $birthdate);
                 $this->log_user(User::get_user_by_username($username));
@@ -50,5 +53,4 @@ class ControllerMain extends ControllerBis {
             "password_confirm" => $confirm_password, "fullname" => $fullname, "email" => $email,
             "birthdate" => $birthdate, "errors" => $errors));
     }
-
 }

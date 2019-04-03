@@ -13,11 +13,12 @@ class ControllerBook extends ControllerBis {
 
     public function add_edit_book() {
         $errors = [];
-        $user = $this->get_user_or_redirect();
-        $is_admin = $user->is_admin();
+        $userselected = $this->get_user_or_redirect();
+        $is_admin = $userselected->is_admin();
         if (isset($_GET['userselected'])) {
             $userselected = trim($_POST["userselected"]);
         }
+            
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
@@ -50,7 +51,7 @@ class ControllerBook extends ControllerBis {
         }
 
         if (ToolsBis::check_fields(['cancel'])) {
-            $this->redirect("rental", "basket", $userselected);
+            $this->redirect("rental", "basket", $userselected->id);
         }
         if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'nbCopies']) && !$view) {
             $isbn = trim($_POST['isbn']);
@@ -58,7 +59,7 @@ class ControllerBook extends ControllerBis {
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
             $nbCopies = trim($_POST['nbCopies']);
-            $errors = Book::validateBook($id, $isbn, $title, $author, $editor, $nbCopies);
+            $errors = (new Book($isbn, $title, $author, $editor,null,$id, $nbCopies))->validateBook();
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
                 $errors = ToolsBis::validate_photo($_FILES['picture']);
                 if (empty($errors)) {
@@ -79,7 +80,7 @@ class ControllerBook extends ControllerBis {
                 } else {
                     Book::edit_book($id, $isbn, $title, $author, $editor, $picture_path, $nbCopies);
                 }
-                $this->redirect("rental", "basket", $userselected);
+                $this->redirect("rental", "basket", $userselected->id);
             }
         }
         (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,

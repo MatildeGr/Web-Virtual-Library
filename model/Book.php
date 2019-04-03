@@ -22,7 +22,7 @@ class Book extends Model {
         $this->nbCopies = $nbCopies;
     }
 
-    public static function getDefaultPicture() {
+    private static function getDefaultPicture() {
         return Configuration::get("default_picture");
     }
 
@@ -98,30 +98,33 @@ class Book extends Model {
         }
     }
 
-    public static function validateBook($id, $isbn, $title, $author, $editor, $nbCopies) {
+    public function validateBook() {
         $errors = [];
+        $isbn = str_replace("-", "", $this->isbn);
         $book = Book::getBookByIsbn($isbn);
-        $numberBooked = Rental::numberBookedOrRent($id);
-        if ($book && ($book->id !== $id)) {
+        $numberBooked = Rental::numberBookedOrRent($this->id);
+        if (($this->id == null && $book->id !== $this->id) && $book) {
             $errors[] = "This ISBN is already used.";
+        } elseif (empty($isbn)) {
+            $errors[] = "ISBN is required.";
         } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {
             $errors[] = "ISBN must contains only numbers.";
-        } else if (!ToolsBis::check_string_length(str_replace("-", "", $isbn), 13, 13)) {
+        } else if (!ToolsBis::check_string_length($isbn, 13, 13)) {
             $errors[] = "ISBN length must be 13 characters.";
         }
-        if ($nbCopies < $numberBooked) {
+        if ($this->nbCopies < $numberBooked) {
             $errors[] = "Copies must remain greater than or equal to the number of copies currently reserved or rented which is $numberBooked ";
         }
-        if ($nbCopies < 1) {
+        if ($this->nbCopies < 1) {
             $errors[] = "Copies cannot be a negative number or 0.";
         }
-        if (empty($title)) {
+        if (empty($this->title)) {
             $errors[] = "Title is required.";
         }
-        if (empty($author)) {
+        if (empty($this->author)) {
             $errors[] = "Author is required.";
         }
-        if (empty($editor)) {
+        if (empty($this->editor)) {
             $errors[] = "Editor is required.";
         }
         return $errors;

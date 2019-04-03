@@ -93,7 +93,7 @@
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>
-                                <td><?= $b->nbCopies - Rental::numberBookedOrRent($book->id)?></td>
+                                <td><?= $b->nbCopies - Rental::numberBookedOrRent($b->id)?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $b->id ?>" method="get">

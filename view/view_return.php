@@ -33,7 +33,7 @@
                                 <td>
                                     <input type="radio" name="state" value="open" id="open" /><label for="Open">Open</label>
                                     <input type="radio" name="state" value="returned" id="returned" /><label for="Returned">Returned</label>
-                                    <input type="radio" name="state" value="all" id="all" checked/><label for="all">All</label>
+                                    <input type="radio" name="state" value="all" id="all" checked="checked"/><label for="all">All</label>
                                 </td>
                             </tr>
                         </table>

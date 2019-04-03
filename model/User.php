@@ -106,43 +106,40 @@ class User extends Model {
         return (int) $result[0] == 1;
     }
 
-    public static function validate_user($id, $username, $password, $password_confirm, $fullname, $email, $birthdate) {
+    public function validate_user() {
         $errors = [];
-        $user = User::get_user_by_username($username);
-        if ($user && $user->id !== $id)
+        $user = User::get_user_by_username($this->username);
+        if ($user && $user->id !== $this->id)
             $errors[] = "This user name is already used.";
-        if (empty($username)) {
+        if (empty($this->username)) {
             $errors[] = "User Name is required.";
-        } elseif (!ToolsBis::check_string_length($username, 3, 32)) {
+        } elseif (!ToolsBis::check_string_length($this->username, 3, 32)) {
             $errors[] = "User Name length must be between 3 and 32 characters.";
         }
-        if (empty($password)) {
+        if (empty($this->hashed_password)) {
             $errors[] = "Password is required.";
         }
-        if (empty($fullname)) {
+        if (empty($this->fullname)) {
             $errors[] = "Full Name is required.";
-        } elseif (!ToolsBis::check_string_length($fullname, 3, 255)) {
+        } elseif (!ToolsBis::check_string_length($this->fullname, 3, 255)) {
             $errors[] = "Full Name length must be between 3 and 255 characters.";
         }
-        if (empty($email)) {
+        if (empty($this->email)) {
             $errors[] = "Email is required.";
-        } elseif (!ToolsBis::check_string_length($email, 5, 64)) {
+        } elseif (!ToolsBis::check_string_length($this->email, 5, 64)) {
             $errors[] = "Email length must be between 5 and 64 characters.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Email address is not valid";
         } else {
-            $user = User::get_user_by_email($email);
-            if ($user && ($id === null || $user->id !== $id))
+            $user = User::get_user_by_email($this->email);
+            if ($user && ($this->id === null || $user->id !== $this->id))
                 $errors[] = "This email address is already used";
         }
-        if ($password != $password_confirm) {
-            $errors[] = "You have to enter twice the same password.";
-        }
-        if (!empty($birthdate)) {
-            if (!ToolsBis::is_valid_date($birthdate)) {
+        if (!empty($this->birthdate)) {
+            if (!ToolsBis::is_valid_date($this->birthdate)) {
                 $errors[] = "Birth Date is not valid";
             }
-            if ($birthdate > ToolsBis::get_date('-18 years')) {
+            if ($this->birthdate > ToolsBis::get_date('-18 years')) {
                 $errors[] = "User must be at least 18 years old";
             }
         }

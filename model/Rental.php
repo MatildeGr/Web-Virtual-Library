@@ -137,14 +137,14 @@ class Rental extends Model {
 
     //fonction qui renvoie true s'il est possible d'ajouter des livres au panier. 
     public static function checkhowmanyrent($iduser) {
-        $query = self::execute("SELECT count(*) from rental where user=:user", array("user" => $iduser));
+        $query = self::execute("SELECT count(*) from rental where user=:user and returndate is null", array("user" => $iduser));
         $data = $query->fetch();
         return (int) $data[0] < Rental::getMaxLocation();
     }
 
     //Renvoie le nombre de copies actuellement réservées ou louées d'un livre.
     public static function numberBookedOrRent($idbook) {
-        $query = self::execute("SELECT count(*) from rental where book=:book", array("book" => $idbook));
+        $query = self::execute("SELECT count(*) from rental where book=:book and returndate is null", array("book" => $idbook));
         $data = $query->fetch();
         return (int) $data[0];
     }
