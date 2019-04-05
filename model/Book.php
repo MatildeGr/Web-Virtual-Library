@@ -103,8 +103,10 @@ class Book extends Model {
         $isbn = str_replace("-", "", $this->isbn);
         $book = Book::getBookByIsbn($isbn);
         $numberBooked = Rental::numberBookedOrRent($this->id);
-        if (($this->id == null && $book->id !== $this->id) && $book) {
-            $errors[] = "This ISBN is already used.";
+        if ($book) {
+            if (($this->id == null && $book->id !== $this->id) && $book) {
+                $errors[] = "This ISBN is already used.";
+            }
         } elseif (empty($isbn)) {
             $errors[] = "ISBN is required.";
         } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {
