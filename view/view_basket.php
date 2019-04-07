@@ -16,7 +16,7 @@
                     <fieldset>
                         <legend>Filter</legend>
                         <label for="filter">Text filter</label>
-                        <input type="search" name="filter" id="filter"/>
+                        <input type="search" name="filter" id="filter" placeholder="Rechercher dans la liste"/>
                         <input type="submit" value="Apply filter">
                     </fieldset>
                 </form>

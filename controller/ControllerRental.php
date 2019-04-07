@@ -42,7 +42,7 @@ class ControllerRental extends ControllerBis {
         }
         if (isset($_POST['filter']) && !empty($_POST['filter'])) {
             $filterBook = $_POST['filter'];
-            $filter = "AND (title LIKE '%$filterBook%' or author LIKE '%$filterBook%' or editor LIKE '%$filterBook%' or isbn LIKE '%$filterBook%') ";
+            $filter = $filterBook;
             $this->redirect("rental", "basket", $userselected, ToolsBis::url_safe_encode($filter));
         } else {
             $filterBook = ' ';
