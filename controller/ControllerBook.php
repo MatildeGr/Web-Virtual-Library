@@ -18,13 +18,14 @@ class ControllerBook extends ControllerBis {
         if (isset($_GET['userselected'])) {
             $userselected = trim($_POST["userselected"]);
         }
-            
+
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
             if (!$book) {
                 ToolsBis::abort('Unknown book');
             }
+            $is_new = false;
             $isbn = $book->isbn;
             $title = $book->title;
             $author = $book->author;
@@ -59,7 +60,7 @@ class ControllerBook extends ControllerBis {
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
             $nbCopies = trim($_POST['nbCopies']);
-            $errors = (new Book($isbn, $title, $author, $editor,null,$id, $nbCopies))->validateBook();
+            $errors = (new Book($isbn, $title, $author, $editor, null, $id, $nbCopies))->validateBook();
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
                 $errors = ToolsBis::validate_photo($_FILES['picture']);
                 if (empty($errors)) {

@@ -104,7 +104,7 @@ class Book extends Model {
         $book = Book::getBookByIsbn($isbn);
         $numberBooked = Rental::numberBookedOrRent($this->id);
         if ($book) {
-            if (($this->id == null && $book->id !== $this->id) && $book) {
+            if (($this->id == null && $book->id !== $this->id) || ($book->isbn == $isbn)) {
                 $errors[] = "This ISBN is already used.";
             }
         } elseif (empty($isbn)) {
