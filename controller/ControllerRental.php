@@ -60,7 +60,13 @@ class ControllerRental extends ControllerBis {
             "menu" => $menu,
             "checkRent" => $checkRent));
     }
-    
+
+    //permet de clear le filtre de la liste des livres. 
+    public function clearfilter() {
+        $this->redirect("rental", "basket", $this->checkUserSelected(), " ");
+    }
+
+    //vérifie si un user est selectionner ou prend l'id de l'user connecter. 
     private function checkUserSelected() {
         $user = $this->get_user_or_redirect();
         return isset($_POST["userselected"]) ? $_POST['userselected'] : $user->id;
@@ -69,26 +75,29 @@ class ControllerRental extends ControllerBis {
     //Ajoute un livre au panier virtuel et met à jour la view basket.
     public function add_basket() {
         $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['filter'])) {
+            $filter = $_POST['filter'];
+        }
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
-            if(Book::getCopy($idbook)<1){
+            if (Book::getCopy($idbook) < 1) {
                 ToolsBis::abort("This book is not avalaible");
-              
             }
             Rental::add_rental($this->checkUserSelected(), $idbook, null, null);
-            //Book::updateCopyPlus($idbook);
-            $this->redirect("rental", "basket", $this->checkUserSelected());
+            $this->redirect("rental", "basket", $this->checkUserSelected(), ToolsBis::url_safe_encode($filter));
         }
     }
 
     //Supprime un livre du panier virtuel et met à jour la view basket.
     public function delete_basket() {
         $user = $this->get_user_or_redirect();
+        if (ToolsBis::check_fields(['filter'])) {
+            $filter = $_POST['filter'];
+        }
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::delete_basket($this->checkUserSelected(), $idbook);
-            //Book::updateCopyMinus($idbook);
-            $this->redirect("rental", "basket", $this->checkUserSelected());
+            $this->redirect("rental", "basket", $this->checkUserSelected(), ToolsBis::url_safe_encode($filter));
         }
     }
 
@@ -102,7 +111,7 @@ class ControllerRental extends ControllerBis {
 
         if (isset($_GET["param1"])) {
             $filter = ToolsBis::url_safe_decode($_GET["param1"]);
-        }else if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+        } else if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
             if (isset($_POST['member']) && !empty($_POST['member'])) {
                 $filterUser = $_POST['member'];
                 $filter[] = "AND username LIKE '%$filterUser%' ";
@@ -148,7 +157,7 @@ class ControllerRental extends ControllerBis {
         }
         $rentals = Rental::getRentalsByFilter($conditions);
 
-        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin,"filterUser"=>$filterUser));
+        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin, "filterUser" => $filterUser));
     }
 
 //,"filterUser"=>$filterUser,"filterBook"=>$filterBook,

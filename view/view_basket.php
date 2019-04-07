@@ -16,10 +16,17 @@
                     <fieldset>
                         <legend>Filter</legend>
                         <label for="filter">Text filter</label>
-                        <input type="search" name="filter" id="filter" placeholder="Rechercher dans la liste"/>
+                        <input type="search" name="filter" id="filter" placeholder="enter text filter..."/>
                         <input type="submit" value="Apply filter">
+                        <input type="submit" value="Clear filter" formaction="rental/clearfilter"> 
+                        <?php if ($filter !== " ") { ?>
+                            books that contain " <?= $filter ?> "
+                        <?php } else { ?>
+                            list of all books
+                        <?php } ?>
                     </fieldset>
                 </form>
+
                 <table class="message_list">
                     <thead>
                         <tr>
@@ -38,7 +45,7 @@
                                 <td><?= $book->title ?></td>
                                 <td><?= $book->author ?></td>
                                 <td><?= $book->editor ?></td>
-                                <td><?= $book->nbCopies - Rental::numberBookedOrRent($book->id)?></td>
+                                <td><?= $book->nbCopies - Rental::numberBookedOrRent($book->id) ?></td>
                                 <td>  <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $book->id ?>" method="get">                                            
                                             <input type="image" value="Edit" src='logo/pen.png'>
@@ -52,14 +59,15 @@
                                             <input type="image"  src='logo/eyes.png'>
                                         </form>
                                     <?php endif; ?>
-                                    <?php if($checkRent && Rental::checkBookAvalaible($book->id)) : ?>
-                                    <form class="button" action="rental/add_basket/" method="POST">
-                                        <input type=hidden name="bookid" value="<?= $book->id ?>">
-                                        <input type=hidden name="userselected" value="<?= $userselected ?>">
-                                        <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
-                                    </form></td>
-                                    
-                                    <?php endif; ?>
+                                    <?php if ($checkRent && Rental::checkBookAvalaible($book->id)) : ?>
+                                        <form class="button" action="rental/add_basket/" method="POST">
+                                            <input type=hidden name="bookid" value="<?= $book->id ?>">
+                                            <input type=hidden name="userselected" value="<?= $userselected ?>">
+                                            <input type="hidden" name="filter" value="<?= $filter ?>">
+                                            <input id ="rent" type="image" value="" src='logo/arrow_bottom.png'>
+                                        </form></td>
+
+                                <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
 
@@ -89,11 +97,11 @@
                     <tbody>
                         <?php foreach ($books_to_rent as $b) : ?>
                             <tr>
-                                <td><?= ToolsBis::formatISBN($b->isbn)  ?></td>
+                                <td><?= ToolsBis::formatISBN($b->isbn) ?></td>
                                 <td><?= $b->title ?></td>
                                 <td><?= $b->author ?></td>
                                 <td><?= $b->editor ?></td>
-                                <td><?= $b->nbCopies - Rental::numberBookedOrRent($b->id)?></td>
+                                <td><?= $b->nbCopies - Rental::numberBookedOrRent($b->id) ?></td>
                                 <td> 
                                     <?php if ($user->is_admin()) : ?>
                                         <form class="button" action="book/add_edit_book/<?= $b->id ?>" method="get">
@@ -113,6 +121,7 @@
                                     <form class="button" action="rental/delete_basket/" method="POST">
                                         <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input type="hidden" name='bookid' value="<?= $b->id ?>" >
+                                        <input type="hidden" name="filter" value="<?= $filter ?>">
                                         <input id="backrent" type="image" value="" src='logo/arrow_top.png'>
                                     </form></td>
                             </tr>
