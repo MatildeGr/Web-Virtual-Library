@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Lun 08 Avril 2019 à 11:52
+-- Généré le :  Lun 08 Avril 2019 à 16:55
 -- Version du serveur :  5.7.11
 -- Version de PHP :  5.6.18
 
@@ -21,6 +21,7 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `prwb_1819_pa04` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `prwb_1819_pa04`;
+
 -- --------------------------------------------------------
 
 --
@@ -48,7 +49,10 @@ INSERT INTO `book` (`id`, `isbn`, `title`, `author`, `editor`, `picture`, `nbCop
 (8, '2210758815004', 'Vingt mille lieues sous les mers', 'Jules Verne', 'MAGNARD', 'picture/default_picture.jpg', 5),
 (9, '2253001279908', 'Journal d\'Anne Frank', 'Isabelle Rosselin', 'LE LIVRE DE POCHE', 'picture/default_picture.jpg', 3),
 (10, '2812902795001', 'Fables de Jean de la Fontaine', 'Jean de La Fontaine', 'EDITIONS DE BORÉE', 'picture/default_picture.jpg', 25),
-(11, '2709650185003', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg', 30);
+(11, '2709650185003', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg', 30),
+(12, '1032402628', 'La pire soirée de ta vie', 'Andy', '404 Editions', NULL, 35),
+(13, '2702165486', 'La vie secrète des écrivains ', 'Guillaume Musso', 'Calmann-Levy', NULL, 30),
+(14, '2226439412', 'La Dernière Chasse ', 'Jean-Christophe Grangé', 'Albin Michel', NULL, 20);
 
 -- --------------------------------------------------------
 
@@ -63,6 +67,43 @@ CREATE TABLE `rental` (
   `rentaldate` datetime DEFAULT NULL,
   `returndate` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Contenu de la table `rental`
+--
+
+INSERT INTO `rental` (`id`, `user`, `book`, `rentaldate`, `returndate`) VALUES
+(14, 2, 7, '2019-02-12 08:06:10', NULL),
+(15, 6, 6, '2016-08-19 06:26:20', NULL),
+(20, 2, 5, '2019-04-08 18:48:03', NULL),
+(21, 2, 6, '2019-02-06 18:48:03', NULL),
+(22, 2, 8, '2019-04-08 18:48:03', NULL),
+(23, 2, 7, '2019-04-08 18:48:03', NULL),
+(29, 3, 5, '2019-02-06 18:48:37', NULL),
+(30, 3, 7, '2019-04-08 18:48:37', NULL),
+(31, 3, 6, '2019-04-08 18:48:37', NULL),
+(35, 5, 14, '2018-12-12 18:48:50', NULL),
+(36, 5, 13, '2018-12-12 18:48:50', NULL),
+(37, 5, 12, '2019-04-08 18:48:50', NULL),
+(42, 6, 14, '2019-04-08 18:49:07', NULL),
+(43, 6, 12, '2019-04-08 18:49:07', NULL),
+(44, 6, 11, '2019-01-17 18:49:07', NULL),
+(45, 6, 10, '2019-04-08 18:49:07', NULL),
+(49, 8, 8, '2019-04-08 18:49:23', NULL),
+(50, 8, 9, '2019-01-16 18:49:23', NULL),
+(51, 8, 10, '2019-04-08 18:49:23', NULL),
+(55, 9, 7, '2019-04-08 18:49:34', NULL),
+(56, 9, 10, '2019-04-08 18:49:34', NULL),
+(57, 9, 12, '2019-02-12 18:49:34', NULL),
+(61, 10, 11, '2019-04-08 18:49:44', NULL),
+(62, 10, 10, '2019-01-15 18:49:44', NULL),
+(63, 10, 14, '2019-01-21 18:49:44', NULL),
+(67, 4, 6, '2019-04-08 18:50:00', NULL),
+(68, 4, 11, '2019-04-08 18:50:00', NULL),
+(69, 4, 12, '2019-04-08 18:50:00', NULL),
+(73, 7, 7, '2019-04-08 18:50:15', NULL),
+(74, 7, 10, '2019-04-08 18:50:15', NULL),
+(75, 7, 13, '2019-04-08 18:50:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -130,12 +171,12 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `book`
 --
 ALTER TABLE `book`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 --
 -- AUTO_INCREMENT pour la table `rental`
 --
 ALTER TABLE `rental`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 --
 -- AUTO_INCREMENT pour la table `user`
 --
