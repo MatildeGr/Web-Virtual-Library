@@ -108,7 +108,7 @@ class ControllerRental extends ControllerBis {
 
         if (isset($_POST['return']) && isset($_POST['filter'])) {
 
-            $this->redirect("rental", "deleteRental", $_POST['return'], $_POST['filter']);
+            $this->redirect("rental", "confirmReturn", $_POST['return'], $_POST['filter']);
         }
 
 
