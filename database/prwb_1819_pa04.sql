@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
+-- version 4.5.4.1
+-- http://www.phpmyadmin.net
 --
--- Hôte : localhost
--- Généré le :  ven. 08 fév. 2019 à 11:10
+-- Client :  localhost
+-- Généré le :  Lun 08 Avril 2019 à 11:52
 -- Version du serveur :  5.7.11
 -- Version de PHP :  5.6.18
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -23,7 +21,6 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `prwb_1819_pa04` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `prwb_1819_pa04`;
-
 -- --------------------------------------------------------
 
 --
@@ -37,21 +34,21 @@ CREATE TABLE `book` (
   `author` varchar(255) NOT NULL,
   `editor` varchar(255) NOT NULL,
   `picture` varchar(255) DEFAULT NULL,
-  `nbCopies` int(11) NOT NULL DEFAULT 1
+  `nbCopies` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `book`
+-- Contenu de la table `book`
 --
 
-INSERT INTO `book` (`id`, `isbn`, `title`, `author`, `editor`, `picture`,`nbCopies`) VALUES
-(5, '2266130692000', 'La Bible de Jérusalem', 'Jesus', 'POCKET', 'picture/default_picture.jpg', 10),
-(6, '2070408507000', 'Le Petit Prince', 'Saint-Exupéry', 'GALLIMARD', 'picture/default_picture.jpg', 20),
-(7, '2266154117000', 'Le Seigneur des Anneaux, Tome 1 : La Communauté de l\'Anneau', 'Tolkien', 'POCKET', 'picture/default_picture.jpg', 15),
-(8, '2210758815000', 'Vingt mille lieues sous les mers', 'Jules Verne', 'MAGNARD', 'picture/default_picture.jpg', 5),
-(9, '2253001279000', 'Journal d\'Anne Frank', 'Isabelle Rosselin', 'LE LIVRE DE POCHE', 'picture/default_picture.jpg', 3),
-(10, '2812902795000', 'Fables de Jean de la Fontaine', 'Jean de La Fontaine', 'EDITIONS DE BORÉE', 'picture/default_picture.jpg', 25),
-(11, '2709650185000', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg', 30);
+INSERT INTO `book` (`id`, `isbn`, `title`, `author`, `editor`, `picture`, `nbCopies`) VALUES
+(5, '2266130692005', 'La Bible de Jérusalem', 'Jesus', 'POCKET', 'picture/default_picture.jpg', 10),
+(6, '2070408507003', 'Le Petit Prince', 'Saint-Exupéry', 'GALLIMARD', 'picture/default_picture.jpg', 20),
+(7, '2266154117004', 'Le Seigneur des Anneaux, Tome 1 : La Communauté de l\'Anneau', 'Tolkien', 'POCKET', 'picture/default_picture.jpg', 15),
+(8, '2210758815004', 'Vingt mille lieues sous les mers', 'Jules Verne', 'MAGNARD', 'picture/default_picture.jpg', 5),
+(9, '2253001279908', 'Journal d\'Anne Frank', 'Isabelle Rosselin', 'LE LIVRE DE POCHE', 'picture/default_picture.jpg', 3),
+(10, '2812902795001', 'Fables de Jean de la Fontaine', 'Jean de La Fontaine', 'EDITIONS DE BORÉE', 'picture/default_picture.jpg', 25),
+(11, '2709650185003', 'Le Fléau : Intégrale', 'Stephen King', 'J.-C. LATTÈS', 'picture/default_picture.jpg', 30);
 
 -- --------------------------------------------------------
 
@@ -84,7 +81,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Déchargement des données de la table `user`
+-- Contenu de la table `user`
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `email`, `birthdate`, `role`) VALUES
@@ -99,7 +96,7 @@ INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `email`, `birthdat
 (10, 'member3', '7ccc9da7be2202de29ef3428808c2c56', 'member3', 'member3@epfc.eu', NULL, 'member');
 
 --
--- Index pour les tables déchargées
+-- Index pour les tables exportées
 --
 
 --
@@ -126,7 +123,7 @@ ALTER TABLE `user`
   ADD UNIQUE KEY `email_unique` (`email`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT pour les tables exportées
 --
 
 --
@@ -134,21 +131,18 @@ ALTER TABLE `user`
 --
 ALTER TABLE `book`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
 --
 -- AUTO_INCREMENT pour la table `rental`
 --
 ALTER TABLE `rental`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
 --
--- Contraintes pour les tables déchargées
+-- Contraintes pour les tables exportées
 --
 
 --
@@ -157,7 +151,6 @@ ALTER TABLE `user`
 ALTER TABLE `rental`
   ADD CONSTRAINT `fk_rentalitem_book` FOREIGN KEY (`book`) REFERENCES `book` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_rentalitem_user1` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

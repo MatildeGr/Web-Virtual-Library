@@ -105,15 +105,15 @@ class Book extends Model {
         $book = Book::getBookByIsbn($isbn);
         $numberBooked = Rental::numberBookedOrRent($this->id);
         if ($book) {
-            if (($this->id == null && $book->id !== $this->id) || ($book->isbn == $isbn)) {
+            if (($this->id == null && $book->id !== $this->id) || ($book->isbn == $isbn && $book->id !== $this->id)) {
                 $errors[] = "This ISBN is already used.";
             }
         } elseif (empty($isbn)) {
             $errors[] = "ISBN is required.";
         } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {
             $errors[] = "ISBN must contains only numbers.";
-        } else if (!ToolsBis::check_string_length($isbn, 12, 16)) {
-            $errors[] = "ISBN length must be 12 characters.";
+        } else if (!ToolsBis::check_string_length($isbn, 13,13)) {
+            $errors[] = "ISBN length must be 13 characters.";
         }
         if ($this->nbCopies < $numberBooked) {
             $errors[] = "Copies must remain greater than or equal to the number of copies currently reserved or rented which is $numberBooked ";

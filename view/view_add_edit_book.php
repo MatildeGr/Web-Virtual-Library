@@ -15,7 +15,7 @@
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
-                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="16"> 
+                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN12($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="16"> 
                             - <input id="checkdigit" name="checkdigit" type="text" value="<?php echo ToolsBis::makeCheckDigit($isbn) ?>"size="1" disabled>
                             (first 12 characters)
                         </td>

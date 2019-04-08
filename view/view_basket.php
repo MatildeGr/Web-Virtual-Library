@@ -16,7 +16,7 @@
                     <fieldset>
                         <legend>Filter</legend>
                         <label for="filter">Text filter</label>
-                        <input type="search" name="filter" id="filter" placeholder="enter text filter..."/>
+                        <input type="text" name="filter" id="filter" value="<?= $filter ?>"/>
                         <input type="submit" value="Apply filter">
                         <input type="submit" value="Clear filter" formaction="rental/clearfilter"> 
                         <?php if ($filter !== " ") { ?>

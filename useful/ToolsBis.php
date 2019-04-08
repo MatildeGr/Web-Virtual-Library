@@ -201,10 +201,20 @@ class ToolsBis extends Tools {
         return json_decode(@gzuncompress(self::base64url_decode($data)), true, 512, JSON_OBJECT_AS_ARRAY);
     }
 
+    //fonction qui affiche les 13chiffre de l'isbn avec les tiret.
     public static function formatISBN($isbn) {
         $isbn = substr_replace($isbn, "-", 3, 0);
         $isbn = substr_replace($isbn, "-", 5, 0);
         $isbn = substr_replace($isbn, "-", 10, 0);
+        return $isbn;
+    }
+    
+    //fonction qui affiche les 12 premier chiffre de l'isbn avec les tiret.
+    public static function formatISBN12($isbn){
+          $isbn = substr_replace($isbn, "-", 3, 0);
+        $isbn = substr_replace($isbn, "-", 5, 0);
+        $isbn = substr_replace($isbn, "-", 10, 0);
+        $isbn = substr($isbn, 0, -1);
         return $isbn;
     }
 
