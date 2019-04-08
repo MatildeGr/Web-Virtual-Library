@@ -19,7 +19,7 @@
                         <input type="text" name="filter" id="filter" value="<?= $filter ?>"/>
                         <input type="submit" value="Apply filter">
                         <input type="submit" value="Clear filter" formaction="rental/clearfilter"> 
-                        <?php if ($filter !== " ") { ?>
+                        <?php if (!empty($filter)) { ?>
                             books that contain " <?= $filter ?> "
                         <?php } else { ?>
                             list of all books
@@ -142,9 +142,11 @@
                 <?php endif; ?>
                 <form class="button" action="Rental/confirm_basket" method="POST">
                     <input type="hidden" name="userselected" value="<?= $userselected ?>">
+                     <input type="hidden" name="filter" value="<?= $filter ?>">
                     <input type="submit" value="Confirm basket">
                 </form>
                 <form class='button' action='Rental/clear_basket' method='POST'>
+                     <input type="hidden" name="filter" value="<?= $filter ?>">
                     <input type="hidden" name="userselected" value="<?= $userselected ?>">
                     <input type="submit" value="Clear Basket">
                 </form>

@@ -12,7 +12,7 @@ class ControllerRental extends ControllerBis {
     public function basket() {
         $user = $this->get_user_or_redirect();
         $userselected = $user->id;
-        $filter = ' ';
+        $filter = "";
         if (!($user->is_admin()) && !($user->is_manager())) {
             $menu = "view/menu_member.html";
         } else {
@@ -34,18 +34,12 @@ class ControllerRental extends ControllerBis {
         } else {
             $this->redirect("rental", "basket", $userselected);
         }
-        if (isset($_GET['param2'])) {
+        if (isset($_GET['param2']) && !empty($_GET['param2'])) {
             $filter = ToolsBis::url_safe_decode($_GET['param2']);
-            if (!$filter) {
-                ToolsBis::abort("Bad url parameter");
-            }
         }
         if (isset($_POST['filter']) && !empty($_POST['filter'])) {
-            $filterBook = $_POST['filter'];
-            $filter = $filterBook;
+            $filter = $_POST['filter'];
             $this->redirect("rental", "basket", $userselected, ToolsBis::url_safe_encode($filter));
-        } else {
-            $filterBook = ' ';
         }
         $checkRent = Rental::checkhowmanyrent($userselected);
         $all_books = Rental::getBookByFilter($userselected, $filter); //Book possible a ajouter
@@ -63,7 +57,7 @@ class ControllerRental extends ControllerBis {
 
     //permet de clear le filtre de la liste des livres. 
     public function clearfilter() {
-        $this->redirect("rental", "basket", $this->checkUserSelected(), " ");
+        $this->redirect("rental", "basket", $this->checkUserSelected(), null);
     }
 
     //vérifie si un user est selectionner ou prend l'id de l'user connecter. 
@@ -75,9 +69,7 @@ class ControllerRental extends ControllerBis {
     //Ajoute un livre au panier virtuel et met à jour la view basket.
     public function add_basket() {
         $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['filter'])) {
-            $filter = $_POST['filter'];
-        }
+        $filter = ControllerRental::setFilter();
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             if (Book::getCopy($idbook) < 1) {
@@ -91,9 +83,7 @@ class ControllerRental extends ControllerBis {
     //Supprime un livre du panier virtuel et met à jour la view basket.
     public function delete_basket() {
         $user = $this->get_user_or_redirect();
-        if (ToolsBis::check_fields(['filter'])) {
-            $filter = $_POST['filter'];
-        }
+        $filter = ControllerRental::setFilter();
         if (ToolsBis::check_fields(['bookid']) && ToolsBis::check_fields(['userselected'])) {
             $idbook = trim($_POST['bookid']);
             Rental::delete_basket($this->checkUserSelected(), $idbook);
@@ -197,13 +187,13 @@ class ControllerRental extends ControllerBis {
             }
             $id = $rent->id;
         } else {
-            $this->redirect("rental", "returnBook",$_GET["param2"]);
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         }
         if (isset($_POST['confirm'])) {
             Rental::returnRental($id);
-            $this->redirect("rental", "returnBook",$_GET["param2"]);
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         } elseif (isset($_POST['cancel'])) {
-            $this->redirect("rental", "returnBook",$_GET["param2"]);
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         }
         (new View("confirmReturn"))->show(array("rent" => $rent));
     }
@@ -212,20 +202,30 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $books_to_rent = Rental::getBookBasket($this->checkUserSelected());
         $datetoday = ToolsBis::getTodayDateTimeBdd();
+        $filter = ControllerRental::setFilter();
         foreach ($books_to_rent as $book) {
             Rental::add_rental($this->checkUserSelected(), $book->id, $datetoday, null);
             Rental::delete_basket($this->checkUserSelected(), $book->id);
         }
-        $this->redirect("rental", "basket", $iduser);
+        $this->redirect("rental", "basket", $this->checkUserSelected(), ToolsBis::url_safe_encode($filter));
     }
 
     public function clear_basket() {
         $user = $this->get_user_or_redirect();
         $books_to_rent = Rental::getBookBasket($this->checkUserSelected());
+        $filter = ControllerRental::setFilter();
         foreach ($books_to_rent as $book) {
             Rental::delete_basket($this->checkUserSelected(), $book->id);
         }
-        $this->redirect("rental", "basket", $this->checkUserSelected());
+        $this->redirect("rental", "basket", $this->checkUserSelected(), ToolsBis::url_safe_encode($filter));
+    }
+
+    private function setFilter() {
+        $filter = "";
+        if (ToolsBis::check_fields(['filter'])) {
+            $filter = $_POST['filter'];
+        }
+        return $filter;
     }
 
 }

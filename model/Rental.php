@@ -101,11 +101,11 @@ class Rental extends Model {
 
 //Renvoie les book possible a ajouter au panier virtuel CONDITIONS NBCOPIES
     public static function getBookByFilter($userselected, $filter) {
-        if ($filter == " ") {
+        if (empty($filter)) {
             $query = self::execute("SELECT id from book where id not in(select book from rental"
                             . " where user=:user and rentaldate is null)"
                             . " and nbCopies>0 ", array("user" => $userselected));
-        } elseif ($filter !== " ") {
+        } else {
             $query = self::execute("SELECT id from book where id not in(select book from rental"
                             . " where user=:user and rentaldate is null)"
                             . " and nbCopies>0 "
