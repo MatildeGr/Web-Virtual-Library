@@ -105,63 +105,62 @@ class ControllerRental extends ControllerBis {
         $user = $this->get_user_or_redirect();
         $this->check_manager_or_admin();
         $isAdmin = $this->isAdmin();
-        $conditions = '';
         $filter = [];
-        $filterUser = '';
+        $filterUser = "";
+        $filterBook = "";
+        $filterRentalDate = null;
+        $filterState = "all";
+
+        if (isset($_POST['delete']) && isset($_POST['filter'])) {
+
+            $this->redirect("rental", "deleteRental", $_POST['delete'], $_POST['filter']);
+        }
+
+        if (isset($_POST['return']) && isset($_POST['filter'])) {
+
+            $this->redirect("rental", "deleteRental", $_POST['return'], $_POST['filter']);
+        }
+
 
         if (isset($_GET["param1"])) {
+
             $filter = ToolsBis::url_safe_decode($_GET["param1"]);
+            if (!empty($filter['username']))
+                $filterUser = $filter['username'];
+            if (!empty($filter['title']))
+                $filterBook = $filter['title'];
+            if (!empty($filter['rentaldate']))
+                $filterRentalDate = $filter['rentaldate'];
+            if (!empty($filter['state']))
+                $filterState = $filter['state'];
         } else if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+
             if (isset($_POST['member']) && !empty($_POST['member'])) {
-                $filterUser = $_POST['member'];
-                $filter[] = "AND username LIKE '%$filterUser%' ";
+                $filter['username'] = $_POST['member'];
             }
+
             if (isset($_POST['book']) && !empty($_POST['book'])) {
-                $filterBook = $_POST['book'];
-                $filter[] = " AND title LIKE '%$filterBook%' ";
+                $filter['title'] = $_POST['book'];
             }
+
             if (isset($_POST['date']) && !empty($_POST['date'])) {
-                $filterRentalDate = ToolsBis::get_date($_POST['date']);
-                $filter[] = " AND (rentaldate = '$filterRentalDate') ";
+                $filter['rentaldate'] = ToolsBis::get_date($_POST['date']);
             }
+
             if (isset($_POST['state']) && !empty($_POST['state'])) {
-                $filterAll = false;
-                $filterReturn = false;
-                $filterOpen = false;
-                if ($_POST['state'] == 'all') {
-                    $filterAll = true;
-                    $filter[] = " AND (returndate is not null or returndate is null) ";
-                } elseif ($_POST['state'] == 'returned') {
-                    $filterReturn = true;
-                    $filter[] = " AND returndate is not null ";
-                } elseif ($_POST['state'] == 'open') {
-                    $filterOpen = true;
-                    $filter[] = " AND returndate is null ";
-                }
+                $state = $_POST['state'];
+                $filter['state'] = $state;
             }
             $this->redirect("rental", "returnBook", ToolsBis::url_safe_encode($filter));
         } else {
-            $filterUser = '';
-            $filterBook = '';
-            $filterRentalDate = null;
-            $filterAll = false;
-            $filterReturn = false;
-            $filterOpen = false;
+            $this->redirect("rental", "returnBook", ToolsBis::url_safe_encode($filter));
         }
 
+        $rentals = Rental::getRentalsByFilter($filter);
 
-        if ($filter) {
-            foreach ($filter as $f) {
-                $conditions .= " $f ";
-            }
-        }
-        $rentals = Rental::getRentalsByFilter($conditions);
-
-        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin, "filterUser" => $filterUser));
+        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
+            "filterRentalDate" => $filterRentalDate, "filterState" => $filterState, "filter" => ToolsBis::url_safe_encode($filter)));
     }
-
-//,"filterUser"=>$filterUser,"filterBook"=>$filterBook,
-    // "filterRentalDate"=>$filterRentalDate,"filterAll"=>$filterAll,"filterReturn"=>$filterReturn,"filterOpen"=>$filterOpen
 
     public function deleteRental() {
         $user = $this->get_user_or_redirect();
@@ -174,13 +173,13 @@ class ControllerRental extends ControllerBis {
             }
             $id = $rent->id;
         } else {
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         }
         if (isset($_POST['confirm'])) {
             Rental::delRentalById($id);
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         } elseif (isset($_POST['cancel'])) {
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook", $_GET["param2"]);
         }
         (new View("delete_rental"))->show(array("rent" => $rent));
     }
@@ -198,13 +197,13 @@ class ControllerRental extends ControllerBis {
             }
             $id = $rent->id;
         } else {
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook",$_GET["param2"]);
         }
         if (isset($_POST['confirm'])) {
             Rental::returnRental($id);
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook",$_GET["param2"]);
         } elseif (isset($_POST['cancel'])) {
-            $this->redirect("rental", "returnBook");
+            $this->redirect("rental", "returnBook",$_GET["param2"]);
         }
         (new View("confirmReturn"))->show(array("rent" => $rent));
     }

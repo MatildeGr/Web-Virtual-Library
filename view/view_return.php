@@ -18,22 +18,22 @@
                         <table>
                             <tr>
                                 <td>Member:</td>
-                                <td><input type="text" name="member" id="member"/><?=$filterUser?></td>
+                                <td><input type="text" name="member" id="member" value="<?= $filterUser ?>"/></td>
                             </tr>
                             <tr>
                                 <td>Book:</td>
-                                <td><input type="text" name="book" id="book"/></td>
+                                <td><input type="text" name="book" id="book" value="<?= $filterBook ?>" /></td>
                             </tr>
                             <tr>
                                 <td>Rental date:</td>
-                                <td><input type="date" name="date" id="date"/></td>
+                                <td><input type="date" name="date" id="date" value="<?= $filterRentalDate ?>"/></td>
                             </tr>
                             <tr>
                                 <td>State:</td>
                                 <td>
-                                    <input type="radio" name="state" value="open" id="open" /><label for="Open">Open</label>
-                                    <input type="radio" name="state" value="returned" id="returned" /><label for="Returned">Returned</label>
-                                    <input type="radio" name="state" value="all" id="all" checked="checked"/><label for="all">All</label>
+                                    <input type="radio" name="state" value="open" id="open" <?= $filterState == "open" ? "checked = 'checked'" : "" ?>"/><label for="Open">Open</label>
+                                    <input type="radio" name="state" value="returned" id="returned"  <?= $filterState == "returned" ? "checked = 'checked'" : "" ?>/><label for="Returned">Returned</label>
+                                    <input type="radio" name="state" value="all" id="all" <?= $filterState == "all" ? "checked = 'checked'" : "" ?>/><label for="all">All</label>
                                 </td>
                             </tr>
                         </table>
@@ -60,14 +60,18 @@
                                 <td><?= $rent->book ?></td>
                                 <td><?= ToolsBis::format_datetime($rent->returndate) ?></td>
                                 <td>  <?php if ($isAdmin) : ?>
-                                        <form class="button" action="rental/deleteRental/<?php echo $rent->id; ?>" method="GET">
-                                            <input type="image" value="delete" src='logo/garbage.png'>
+                                        <form class="button" action="rental/returnBook" method="POST">
+                                            <input type="hidden" name="delete" value="<?php echo $rent->id; ?>">
+                                            <input type="hidden" name="filter" value="<?php echo $filter; ?>">
+                                            <input type="image" src='logo/garbage.png'>
                                         </form>
                                     <?php endif; ?>
                                     <?php if (!$rent->returndate) : ?>
-                                    <form class="button" action="rental/confirmReturn/<?php echo $rent->id; ?>" method="GET">
-                                        <input type="image" value="return" src='logo/editRent.png'>                                     
-                                    </form>
+                                        <form class="button" action="rental/returnBook" method="POST">
+                                            <input type="hidden" name="return" value="<?php echo $rent->id; ?>">
+                                            <input type="hidden" name="filter" value="<?php echo $filter; ?>">
+                                            <input type="image"  src='logo/editRent.png'>                                     
+                                        </form>
                                     <?php endif; ?>
                                 </td>
                             </tr>

@@ -121,6 +121,7 @@ class Rental extends Model {
     }
 
     public static function getRentalsByFilter($filter) {
+        $filter = Rental::filterToSqlQuery($filter);
         $query = self::execute("SELECT rental.id, username,title,rentaldate,returndate "
                         . "FROM rental,book,user "
                         . "WHERE user.id = user AND book.id = book AND rentaldate IS NOT NULL"
@@ -131,6 +132,43 @@ class Rental extends Model {
             $results[] = new Rental($row["username"], $row["title"], $row["rentaldate"], $row["returndate"], $row["id"]);
         }
         return $results;
+    }
+
+    private static function filterToSqlQuery($filter) {
+        $sql =" ";
+        if (($filter)) {
+            if (!empty($filter['username'])) {
+                $filterUser = $filter['username'];
+                $sql .= "AND username LIKE '%$filterUser%' ";
+            }
+            if (!empty($filter['tilte'])) {
+                $filterTitle = $filter['tilte'];
+                $sql .= " AND title LIKE '%$filterBook%' ";
+                
+            }
+            if (!empty($filter['returndate'])) {
+                $filterReturndate = $filter['returndate'];
+                $sql .= " AND (rentaldate = '$filterRentalDate') ";
+                
+            }
+            if(!empty($filter['state'])){
+                $state = $filter['state'];
+                
+                if($state == "all"){
+                    
+                    $sql .= " AND (returndate is not null or returndate is null) ";
+                    
+                }elseif($state == "returned"){
+                    
+                    $sql .=  " AND returndate is not null ";
+                    
+                }elseif($state == "open"){
+                    
+                    $sql .= " AND returndate is null ";
+                }
+            }
+        }
+        return $sql;
     }
 
     public static function delete_basket($iduser, $idbook) {
