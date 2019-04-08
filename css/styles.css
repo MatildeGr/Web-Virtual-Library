@@ -6,12 +6,12 @@
 body {
     width       :900px;
     margin      :20px auto;
-    background  :#f8f8f8;
+    background  :#F3EBEB     ;
     border      :1px solid #888;
 }
 
 html {
-    background  :#fff
+    background  :#979797    
 }
 
 .main {
@@ -30,8 +30,8 @@ form * {
 
 .title {
     text-align  :center;
-    background  :lightsteelblue;
-    color       :yellow;
+    background  :#A42727;
+    color       :white  ;
     font-family :helvetica;
     font-size   :20pt;
     font-weight :bold;
@@ -67,9 +67,11 @@ form * {
     border: 1px solid black;
     padding-left: 5px;
     padding-right: 5px;
+    width: 1%;
+    height: 0%;
 }
 .message_list button{
-    diplay: inline-block;
+    display: inline-block;
 }
 
 textarea {
