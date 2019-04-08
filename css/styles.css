@@ -4,7 +4,7 @@
 }
 
 body {
-    width       :800px;
+    width       :900px;
     margin      :20px auto;
     background  :#f8f8f8;
     border      :1px solid #888;
@@ -60,7 +60,7 @@ form * {
 }
 
 .message_list * {
-    font-size: 11pt;
+    font-size: 10pt;
 }
 
 .message_list th, .message_list td{

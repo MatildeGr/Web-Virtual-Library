@@ -15,7 +15,10 @@
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
-                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?>></td>
+                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="16"> 
+                            - <input id="checkdigit" name="checkdigit" type="text" value="<?php echo ToolsBis::makeCheckDigit($isbn) ?>"size="1" disabled>
+                            (first 12 characters)
+                        </td>
                     </tr>
                     <tr>
                         <td>Title(*):</td>
@@ -33,7 +36,7 @@
                         <td>Picture:</td>
                         <?php if (!$view): ?>
                             <td><input id="picture" name="picture" type="file" accept="image/x-png, image/gif, image/jpeg"></td>
-                            <?php endif; ?>
+                        <?php endif; ?>
                     </tr>
                     <tr>
                         <td></td>
@@ -43,7 +46,7 @@
                     </tr>
                     <tr>
                         <td>Copies: </td>
-                        <td><input id="copies" name="nbCopies" type="number" value="<?php echo $nbCopies?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
+                        <td><input id="copies" name="nbCopies" type="number" value="<?php echo $nbCopies ?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
                     </tr>
                 </table>
                 <?php if (!$view): ?>

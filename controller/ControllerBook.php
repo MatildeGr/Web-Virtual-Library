@@ -76,6 +76,7 @@ class ControllerBook extends ControllerBis {
 
 
             if (count($errors) === 0) {
+                $isbn .= ToolsBis::makeCheckDigit($isbn);
                 if ($is_new) {
                     Book::add_book($isbn, $title, $author, $editor, $picture_path, $nbCopies);
                 } else {
