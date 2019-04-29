@@ -53,4 +53,48 @@ class ControllerMain extends ControllerBis {
             "birthdate" => $birthdate, "errors" => $errors));
     }
 
+    //services
+
+    public function user_available_service() {
+        $res = "true";
+        if (isset($_POST["username"]) && $_POST["username"] !== "") {
+            $user = User::get_user_by_username($_POST["username"]);
+            if ($user) {
+                $res = "false";
+            }
+        }
+        echo $res;
+    }
+
+    public function email_available_service() {
+        $res = "true";
+        if (isset($_POST["email"]) && $_POST["email"] !== "") {
+            $user = User::get_user_by_email($_POST["email"]);
+            if ($user) {
+                $res = "false";
+            }
+        }
+        echo $res;
+    }
+
+    public function birthdate_available_service() {
+        $res = "true";
+        if (isset($_POST["birthdate"]) && $_POST["birthdate"] !== "") {
+            if (!ToolsBis::is_valid_date($_POST["birthdate"])) {
+                $res = "false";
+            }
+        }
+        echo $res;
+    }
+
+    public function birthdate_available_service2() {
+        $res = "true";
+        if (isset($_POST["birthdate"]) && $_POST["birthdate"] !== "") {
+            if ($_POST["birthdate"] > ToolsBis::get_date('-18 years')) {
+                $res = "false";
+            }
+        }
+        echo $res;
+    }
+
 }
