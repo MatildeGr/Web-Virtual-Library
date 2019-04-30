@@ -6,6 +6,79 @@
         <base href="<?= $web_root ?>"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
+        <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="lib/jquery-validation-1.19.0/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+        <script>
+
+
+            $(function () {
+                
+                var isbn = $("#isbn");
+                
+                isbn.on("keyup", function (event) {
+
+
+                    var selection = window.getSelection().toString();
+                    if (selection !== '') {
+                        return;
+                    }
+                    if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                        return;
+                    }
+
+                    var $this = $(this);
+                    var input = $this.val();
+                    input = input.replace(/[\W\s\._\-]+/g, '');
+
+                    var split = 3;
+                    var chunk = [];
+
+                    for (var i = 0, len = input.length; i < len; i += split) {
+                        split = (i >= 4 && i <= 11) ? 4 : (i === 3) ? 1 : 3;
+                        chunk.push(input.substr(i, split));
+                    }
+
+                    $this.val(function () {
+                        return chunk.join("-").toUpperCase();
+                    });
+                    
+                     $("#checkdigit").val(checkDigit(input));
+
+                });
+
+
+
+            });
+
+            function checkDigit(data) {
+
+                var isbn =  data.replace(/[($)\s\._\-]+/g, '');
+                if (isbn.length === 12) {
+                    var check = 0;
+                    for (var i = 0; i < 12; i += 2) {
+                        check += isbn.substr( i, 1);
+                    }
+
+                    for (var i = 1; i < 12; i += 2) {
+                        check += 3 * isbn.substr( i, 1);
+                    }
+
+                    check = 10 - check % 10;
+                    if (check === 10) {
+                        check = 0;
+                    }
+
+                    return check;
+                }
+
+            }
+
+        </script>
+
+
+
     </head>
     <body>
         <div class="title"><?php echo $titlePage ?> book</div>
@@ -15,8 +88,8 @@
                 <table>
                     <tr>
                         <td>ISBN(*):</td>
-                        <td><input id="isbn" name="isbn" type="text" value="<?php echo ToolsBis::formatISBN12($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="16"> 
-                            - <input id="checkdigit" name="checkdigit" type="text" value="<?php echo ToolsBis::makeCheckDigit($isbn) ?>"size="1" disabled>
+                        <td><input id="isbn" name="isbn" type="text"  value="<?php echo ToolsBis::formatISBN12($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="15"> 
+                            - <input id="checkdigit" name="checkdigit" type="text"  value="<?php echo ToolsBis::makeCheckDigit($isbn) ?>"size="1" disabled>
                             (first 12 characters)
                         </td>
                     </tr>
