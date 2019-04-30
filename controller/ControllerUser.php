@@ -110,7 +110,7 @@ class ControllerUser extends ControllerBis {
             if ($is_new) {
                 $password = $username;
             }
-            $errors = (new User( $fullname, $username, $password, $email, $role, $birthdate, $id ))->validate_user();
+            $errors = (new User($fullname, $username, $password, $email, $role, $birthdate, $id))->validate_user();
 
             if ($is_admin) {
                 $role = trim($_POST['role']);
@@ -145,13 +145,37 @@ class ControllerUser extends ControllerBis {
                 $this->redirect("user", "user_lst");
             }
         }
-        (new View("add_edit_user"))->show(array("username" => $username, "fullname" => $fullname,
+        (new View("add_edit_user"))->show(array("id" => $id, "username" => $username, "fullname" => $fullname,
             "email" => $email, "birthdate" => $birthdate, "role" => $role, "is_new" => $is_new, "errors" => $errors, "is_admin" => $is_admin));
     }
+
+    private function isPasswordConfirmed($password, $confirmpassword) {
+        return $password == $confirmpassword;
+    }
+
+    public function user_available_service() {
+        $res = "true";
+
+        if (isset($_POST["username"]) && $_POST["username"] !== "" && isset($_POST["id"])) {
+            $id = $_POST["id"];
+            $user = User::get_user_by_username($_POST["username"]);
+            if ($user && (($id === null || $id == "") || $id !== $user->id)) {
+                $res = "false";
+            }
+        }
+        echo $res;
+    }
     
-    
-    private function isPasswordConfirmed($password,$confirmpassword){
-                return $password == $confirmpassword; 
+     public function email_available_service() {
+        $res = "true";
+        if (isset($_POST["email"]) && $_POST["email"] !== "" && isset($_POST["id"])) {
+            $id = $_POST["id"];
+            $user = User::get_user_by_email($_POST["email"]);
+            if ($user&& (($id === null || $id == "") || $id !== $user->id)) {
+                $res = "false";
+            }
+        }
+        echo $res;
     }
 
 }

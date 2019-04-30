@@ -8,18 +8,14 @@
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script src="lib/jquery-validation-1.19.0/jquery.validate.min.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
         <script>
 
 
             $(function () {
-                
+
                 var isbn = $("#isbn");
-                
+
                 isbn.on("keyup", function (event) {
-
-
                     var selection = window.getSelection().toString();
                     if (selection !== '') {
                         return;
@@ -43,26 +39,85 @@
                     $this.val(function () {
                         return chunk.join("-").toUpperCase();
                     });
-                    
-                     $("#checkdigit").val(checkDigit(input));
+
+                    $("#checkdigit").val(checkDigit(input));
 
                 });
 
+
+                $('#form').validate({
+                    rules: {
+                        isbn: {
+                             remote: {
+                                url: 'book/isbn_available_service',
+                                type: 'post',
+                                data: {
+                                    username: function () {
+                                        return $("#isbn").val();
+                                             
+                                    },
+                                    id: function(){
+                                         return $("#id").val();
+                                     }   
+
+                                }
+                            },
+                            required: true,
+                            minlength: 15,
+                            maxlength: 15
+                        },
+                        title: {
+                            required: true
+                        },
+                        author: {
+                            required: true
+                        },
+                        editor: {
+                            required: true
+                        },
+                        copies: {
+                            required: true,
+                            min: 1
+                        }
+                    },
+                    messages: {
+                        isbn: {
+                            required: 'required',
+                            minlength: 'minimum 12 characters',
+                            maxlength: 'maximum 12 characters'
+                        },
+                        title: {
+                            required: 'required'
+                        },
+                        author: {
+                            required: 'required'
+                        },
+                        editor: {
+                            required: 'required'
+                        },
+                        copies: {
+                            required: 'required',
+                            min: 'the number of copies must be greater than or equal to 1'
+                        }
+
+                    }
+                });
+                $("input:text:first").focus();
 
 
             });
 
             function checkDigit(data) {
 
-                var isbn =  data.replace(/[($)\s\._\-]+/g, '');
+                var isbn = data.replace(/[($)\s\._\-]+/g, '');
                 if (isbn.length === 12) {
                     var check = 0;
                     for (var i = 0; i < 12; i += 2) {
-                        check += isbn.substr( i, 1);
+                        check += isbn.substr(i, 1);
                     }
 
                     for (var i = 1; i < 12; i += 2) {
-                        check += 3 * isbn.substr( i, 1);
+                        check += 3 * isbn.substr(i, 1);
                     }
 
                     check = 10 - check % 10;
@@ -84,8 +139,11 @@
         <div class="title"><?php echo $titlePage ?> book</div>
         <?php include("menu.html"); ?>
         <div class="main">
-            <form action="" method="post" enctype='multipart/form-data'>
+            <form id="form" action="" method="post" enctype='multipart/form-data'>
                 <table>
+                    <tr>
+                        <td><input id="id" name="title" type="text" value="<?php echo $title ?>" hidden></td>
+                    </tr>
                     <tr>
                         <td>ISBN(*):</td>
                         <td><input id="isbn" name="isbn" type="text"  value="<?php echo ToolsBis::formatISBN12($isbn) ?>"  <?= $is_admin ? '' : 'disabled' ?> maxlength="15"> 
@@ -119,7 +177,7 @@
                     </tr>
                     <tr>
                         <td>Copies: </td>
-                        <td><input id="copies" name="nbCopies" type="number" value="<?php echo $nbCopies ?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
+                        <td><input id="copies" name="copies" type="number" value="<?php echo $nbCopies ?>"<?= $is_admin ? '' : 'disabled' ?> > </td>
                     </tr>
                 </table>
                 <?php if (!$view): ?>

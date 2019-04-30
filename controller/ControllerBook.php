@@ -85,7 +85,7 @@ class ControllerBook extends ControllerBis {
                 $this->redirect("rental", "basket", $userselected->id);
             }
         }
-        (new View("add_edit_book"))->show(array("isbn" => $isbn, "title" => $title,
+        (new View("add_edit_book"))->show(array("id" => $id, "isbn" => $isbn, "title" => $title,
             "author" => $author, "editor" => $editor, "picture" => $picture_path, "nbCopies" => $nbCopies,
             "errors" => $errors, "view" => $view, "titlePage" => $titlePage, "is_admin" => $is_admin));
     }
@@ -117,6 +117,20 @@ class ControllerBook extends ControllerBis {
             $this->redirect("rental", "basket", $userselected);
         }
         (new View("delete_book"))->show(array("user" => $user, "book_del" => $book_del, "errors" => $errors));
+    }
+    
+        public function isbn_available_service() {
+        $res = "true";
+
+        if (isset($_POST["isbn"]) && $_POST["isbn"] !== "" && isset($_POST["id"])) {
+            $id = $_POST["id"];
+            $isbn = str_replace("-", "", $_POST["isbn"]);
+            $book = Book::getBookByIsbn($isbn);
+            if ($book && (($id === null || $id == "") || $id !== $book->id)) {
+                $res = "false";
+            }
+        }
+        echo $res;
     }
 
 }
