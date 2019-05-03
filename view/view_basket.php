@@ -8,29 +8,48 @@
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script>
-            var books = <?= bookToJson ?>;
+            
+            
 
+            var books = <?= $bookToJson ?>;
+            var table;
 
-            var table = $("#table");
 
 
             $(function () {
-                
-                
-                
-                diplayTable();
+
+                $('#formFilter').submit(function () {
+                    return false;
+                });
+
+                table = $("#message_list");
+                $("#applyFilter").hide();
+
+
+                $("#clear").click(function () {
+                    $("#filter").val("");
+                    applyChange();
+                });
+
+
+                $("#filter").change(function () {
+
+                    applyChange();
+
+                });
+
+
+                displayTable();
 
             });
 
-            $("#filter").change(function () {
-                console.log("filter action");
+            function applyChange() {
                 $.post("rental/basketFilterService", {userSelected: $("#user").val(), filter: $("#filter").val()}, function (data) {
                     books = data;
                     displayTable();
                 }, "json");
 
-            });
-
+            }
 
             function displayTable() {
                 var html = html += "<thead>";
@@ -44,13 +63,11 @@
                 html += "</thead>";
                 for (var b of books) {
                     html += "<tr>";
-                    html += "<td></td>";
                     html += "<td>" + b.isbn + "</td>";
                     html += "<td>" + b.title + "</td>";
                     html += "<td>" + b.author + "</td>";
                     html += "<td>" + b.editor + "</td>";
                     html += "<td>" + b.copies + "</td>";
-                    html += "<td></td>";
                     html += "</tr>";
                 }
                 table.html(html);
@@ -64,13 +81,13 @@
         <?php include($menu); ?>
         <div class="main">
             <div class="book_list">
-                <form method="post" action="" class="filter">              
+                <form id="formFilter" method="post" action="" class="filter">              
                     <fieldset>
                         <legend>Filter</legend>
                         <label for="filter">Text filter</label>
                         <input type="text" name="filter" id="filter" value="<?= $filter ?>"/>
-                        <input type="submit" value="Apply filter">
-                        <input type="submit" value="Clear filter" formaction="rental/clearfilter"> 
+                        <input type="submit" id="applyFilter" value="Apply filter">
+                        <input type="submit" id="clear" value="Clear filter" formaction="rental/clearfilter"> 
                         <?php if (!empty($filter)) { ?>
                             books that contain " <?= $filter ?> "
                         <?php } else { ?>
@@ -79,7 +96,7 @@
                     </fieldset>
                 </form>
 
-                <table id="table" class="message_list">
+                <table id="message_list" class="message_list">
                     <thead>
                         <tr>
                             <th>ISBN</th>

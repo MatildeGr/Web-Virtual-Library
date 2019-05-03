@@ -119,8 +119,8 @@ class Rental extends Model {
         }
         return $results;
     }
-    
-     public static function bookToJson($books) {
+
+    public static function bookToJson($books) {
 
         $str = "";
 
@@ -228,6 +228,8 @@ class Rental extends Model {
         return $book->nbCopies - $numberBooked != 0;
     }
 
+    
+
     public static function rentalsResourcesToJson($rentals) {
         $str = "";
         foreach ($rentals as $rental) {
@@ -270,6 +272,5 @@ class Rental extends Model {
 
         return "[$events]";
     }
-
 
 }

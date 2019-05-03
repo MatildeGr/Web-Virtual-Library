@@ -24,10 +24,8 @@
         <script>
 
 
-            var rental = <?= $rentals_json ?>;
+            
             $(function () {
-
-
                 //cache le bouton apply filter
                 $("#submit").hide();
 
@@ -39,19 +37,9 @@
 
                 //filtre dynamique
                 $("input").change(function () {
-//                    console.log("filter action");
-//                    $.post("rental/filterService", {member: $("#member").val(), book: $("#book").val(), date: $("#date").val(), state: $("#state").val()}, function (data) {
-//                        rental = data;
-//                        console.log("refresh calendar");
-//                        //displayTable();
-//                    }, "json");
-
                     calendar.refetchEvents();
                     calendar.refetchResources();
                 });
-
-
-
 
                 //fullcalendar timeline
                 var calendarEl = document.getElementById('table');
@@ -105,10 +93,6 @@
                             };
                         }
                     }
-
-
-
-
                 });
                 $("#table").html(calendar.render());
 

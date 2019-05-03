@@ -59,7 +59,7 @@ class ControllerRental extends ControllerBis {
     
     public function basketFilterService(){
         if(isset($_POST['userSelected']) && isset($_POST['filter'])){
-            Rental::getBookByFilter($_POST['userSelected'], $_POST['filter']);
+            echo Rental::bookToJson(Rental::getBookByFilter($_POST['userSelected'], $_POST['filter']));
         }
     }
 
@@ -155,10 +155,10 @@ class ControllerRental extends ControllerBis {
         }
 
         $rentals = Rental::getRentalsByFilter($filter);
-        $rentals_json = json_encode(Rental::rentalsToJson($rentals), 2);
+        //$rentals_json = json_encode(Rental::rentalsToJson($rentals), 2);
 
 
-        (new View("return"))->show(array("rentals" => $rentals, "rentals_json" => $rentals_json, "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
+        (new View("return"))->show(array("rentals" => $rentals,  "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
             "filterRentalDate" => $filterRentalDate, "filterState" => $filterState, "filter" => ToolsBis::url_safe_encode($filter)));
     }
 
