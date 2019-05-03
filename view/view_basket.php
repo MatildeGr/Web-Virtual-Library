@@ -6,6 +6,58 @@
         <base href="<?= $web_root ?>"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
+        <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script>
+            var books = <?= bookToJson ?>;
+
+
+            var table = $("#table");
+
+
+            $(function () {
+                
+                
+                
+                diplayTable();
+
+            });
+
+            $("#filter").change(function () {
+                console.log("filter action");
+                $.post("rental/basketFilterService", {userSelected: $("#user").val(), filter: $("#filter").val()}, function (data) {
+                    books = data;
+                    displayTable();
+                }, "json");
+
+            });
+
+
+            function displayTable() {
+                var html = html += "<thead>";
+                html += "<tr>";
+                html += "<th>ISBN</th>";
+                html += "<th>Title</th>";
+                html += "<th>Author</th>";
+                html += "<th>Editor</th>";
+                html += "<th>Nb Copies</th>";
+                html += "</tr>";
+                html += "</thead>";
+                for (var b of books) {
+                    html += "<tr>";
+                    html += "<td></td>";
+                    html += "<td>" + b.isbn + "</td>";
+                    html += "<td>" + b.title + "</td>";
+                    html += "<td>" + b.author + "</td>";
+                    html += "<td>" + b.editor + "</td>";
+                    html += "<td>" + b.copies + "</td>";
+                    html += "<td></td>";
+                    html += "</tr>";
+                }
+                table.html(html);
+            }
+
+
+        </script>
     </head>
     <body>
         <div class="title">Basket</div>
@@ -27,7 +79,7 @@
                     </fieldset>
                 </form>
 
-                <table class="message_list">
+                <table id="table" class="message_list">
                     <thead>
                         <tr>
                             <th>ISBN</th>
@@ -142,11 +194,11 @@
                 <?php endif; ?>
                 <form class="button" action="Rental/confirm_basket" method="POST">
                     <input type="hidden" name="userselected" value="<?= $userselected ?>">
-                     <input type="hidden" name="filter" value="<?= $filter ?>">
+                    <input type="hidden" name="filter" value="<?= $filter ?>">
                     <input type="submit" value="Confirm basket">
                 </form>
                 <form class='button' action='Rental/clear_basket' method='POST'>
-                     <input type="hidden" name="filter" value="<?= $filter ?>">
+                    <input type="hidden" name="filter" value="<?= $filter ?>">
                     <input type="hidden" name="userselected" value="<?= $userselected ?>">
                     <input type="submit" value="Clear Basket">
                 </form>

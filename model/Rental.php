@@ -119,6 +119,27 @@ class Rental extends Model {
         }
         return $results;
     }
+    
+     public static function bookToJson($books) {
+
+        $str = "";
+
+        foreach ($books as $book) {
+            $isbn = json_encode($book->isbn);
+            $title = json_encode($book->title);
+            $author = json_encode($book->author);
+            $editor = json_encode($book->editor);
+            $copies = json_encode($book->nbCopies);
+
+            $str .= "{\"isbn\":$isbn,\"title\":$title,\"author\":$author,\"editor\":$editor,\"copies\":$copies},";
+        }
+        if ($str !== "") {
+
+            $str = substr($str, 0, strlen($str) - 1);
+        }
+
+        return "[$str]";
+    }
 
     public static function getRentalsByFilter($filter) {
         $filter = Rental::filterToSqlQuery($filter);
@@ -135,35 +156,31 @@ class Rental extends Model {
     }
 
     private static function filterToSqlQuery($filter) {
-        $sql =" ";
+        $sql = " ";
         if (($filter)) {
             if (!empty($filter['username'])) {
                 $filterUser = $filter['username'];
                 $sql .= "AND username LIKE '%$filterUser%' ";
             }
-            if (!empty($filter['tilte'])) {
-                $filterTitle = $filter['tilte'];
-                $sql .= " AND title LIKE '%$filterBook%' ";
-                
+            if (!empty($filter['title'])) {
+                $filterTitle = $filter['title'];
+                $sql .= " AND title LIKE '%$filterTitle%' ";
             }
-            if (!empty($filter['returndate'])) {
-                $filterReturndate = $filter['returndate'];
-                $sql .= " AND (rentaldate = '$filterRentalDate') ";
-                
+            if (!empty($filter['rentaldate'])) {
+                $filterReturndate = $filter['rentaldate'];
+                $sql .= " AND (rentaldate = '$filterReturndate') ";
             }
-            if(!empty($filter['state'])){
+            if (!empty($filter['state'])) {
                 $state = $filter['state'];
-                
-                if($state == "all"){
-                    
+
+                if ($state == "all") {
+
                     $sql .= " AND (returndate is not null or returndate is null) ";
-                    
-                }elseif($state == "returned"){
-                    
-                    $sql .=  " AND returndate is not null ";
-                    
-                }elseif($state == "open"){
-                    
+                } elseif ($state == "returned") {
+
+                    $sql .= " AND returndate is not null ";
+                } elseif ($state == "open") {
+
                     $sql .= " AND returndate is null ";
                 }
             }
@@ -210,5 +227,49 @@ class Rental extends Model {
         $book = Book::get_by_id($idbook);
         return $book->nbCopies - $numberBooked != 0;
     }
+
+    public static function rentalsResourcesToJson($rentals) {
+        $str = "";
+        foreach ($rentals as $rental) {
+            $id = json_encode($rental->id);
+            $book = json_encode($rental->book);
+            $user = json_encode($rental->user);
+            $str .= "{\"id\":$id,\"user\":$user,\"book\":$book},";
+        }
+        if ($str !== "") {
+            $str = substr($str, 0, strlen($str) - 1);
+        }
+
+        return "[$str]";
+    }
+
+    public static function rentalsEventsToJson($rentals) {
+
+        $todayDate = ToolsBis::getTodayDateTimeBdd();
+        $events = "";
+
+        foreach ($rentals as $rental) {
+            $id = json_encode($rental->id);
+            $rentaldate = json_encode($rental->rentaldate);
+
+            if ($rental->returndate === null) {
+                $returndate = ToolsBis::get_datetime($rental->rentaldate . Rental::getMaxDuration());
+                $color = json_encode(($returndate < $todayDate) ? '#FE0103' : '#0DA601');
+                $returndate = json_encode(ToolsBis::get_datetime($todayDate));
+            } else {
+                $returndate = json_encode($rental->returndate);
+                $color = json_encode(($rental->returndate > ToolsBis::get_datetime($rental->rentaldate . Rental::getMaxDuration())) ? '#FE7677' : '#48F13B');
+            }
+
+            $events .= "{\"id\":$id,\"resourceId\":$id,\"start\":$rentaldate,\"end\":$returndate,\"color\":$color},";
+        }
+        if ($events !== "") {
+
+            $events = substr($events, 0, strlen($events) - 1);
+        }
+
+        return "[$events]";
+    }
+
 
 }

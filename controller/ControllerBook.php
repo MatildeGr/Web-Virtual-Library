@@ -18,7 +18,7 @@ class ControllerBook extends ControllerBis {
         if (isset($_GET['userselected'])) {
             $userselected = trim($_POST["userselected"]);
         }
-
+        
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
@@ -54,12 +54,12 @@ class ControllerBook extends ControllerBis {
         if (ToolsBis::check_fields(['cancel'])) {
             $this->redirect("rental", "basket", $userselected->id);
         }
-        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'nbCopies']) && !$view) {
+        if (ToolsBis::check_fields(['save', 'isbn', 'title', 'author', 'editor', 'copies']) && !$view) {
             $isbn = trim($_POST['isbn']);
             $title = trim($_POST['title']);
             $author = trim($_POST['author']);
             $editor = trim($_POST['editor']);
-            $nbCopies = trim($_POST['nbCopies']);
+            $nbCopies = trim($_POST['copies']);
             $errors = (new Book($isbn, $title, $author, $editor, null, $id, $nbCopies))->validateBook();
             if (isset($_FILES['picture']) && $_FILES['picture']['error'] === self::UPLOAD_ERR_OK) {
                 $errors = ToolsBis::validate_photo($_FILES['picture']);

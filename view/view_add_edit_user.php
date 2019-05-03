@@ -11,6 +11,12 @@
         <script>
 
             $(function () {
+
+                var btnCancel = $("#cancel");
+                btnCancel.click(e => {
+                    $("#signupForm").off("submit");
+                })
+
                 $.validator.addMethod("validateDate", function (value, element) {
 
                     return isNaN(Date.parse(value)); //true si fausse date et false si vraie date
@@ -31,17 +37,17 @@
                 $('#signupForm').validate({
                     rules: {
                         username: {
-                             remote: {
+                            remote: {
                                 url: 'user/user_available_service',
                                 type: 'post',
                                 data: {
                                     username: function () {
                                         return $("#username").val();
-                                             
+
                                     },
-                                    id: function(){
-                                         return $("#id").val();
-                                     }   
+                                    id: function () {
+                                        return $("#id").val();
+                                    }
 
                                 }
                             },
@@ -62,9 +68,9 @@
                                     email: function () {
                                         return $("#email").val();
                                     },
-                                    id: function(){
-                                         return $("#id").val();
-                                     } 
+                                    id: function () {
+                                        return $("#id").val();
+                                    }
                                 }
                             },
                             required: true,
@@ -139,7 +145,7 @@
                     </tr>
                 </table>
                 <input type="submit" name="save" value="Save">
-                <input type="submit" name="cancel" value="Cancel">
+                <input id="cancel" type="submit" name="cancel" value="Cancel">
             </form>
             <?php include('insert_errors.php'); ?>
         </div>

@@ -43,6 +43,7 @@ class ControllerRental extends ControllerBis {
         }
         $checkRent = Rental::checkhowmanyrent($userselected);
         $all_books = Rental::getBookByFilter($userselected, $filter); //Book possible a ajouter
+        $all_books_to_json = Rental::bookToJson($all_books);
         $books_to_rent = Rental::getBookBasket($userselected); //Tableau de BOOK dans le panier virtuel
         $users = User::get_users();
         (new View("basket"))->show(array("user" => $user,
@@ -52,7 +53,14 @@ class ControllerRental extends ControllerBis {
             "userselected" => $userselected,
             "filter" => $filter,
             "menu" => $menu,
-            "checkRent" => $checkRent));
+            "checkRent" => $checkRent,
+            "bookToJson" => $all_books_to_json));
+    }
+    
+    public function basketFilterService(){
+        if(isset($_POST['userSelected']) && isset($_POST['filter'])){
+            Rental::getBookByFilter($_POST['userSelected'], $_POST['filter']);
+        }
     }
 
     //permet de clear le filtre de la liste des livres. 
@@ -147,9 +155,89 @@ class ControllerRental extends ControllerBis {
         }
 
         $rentals = Rental::getRentalsByFilter($filter);
+        $rentals_json = json_encode(Rental::rentalsToJson($rentals), 2);
 
-        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
+
+        (new View("return"))->show(array("rentals" => $rentals, "rentals_json" => $rentals_json, "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
             "filterRentalDate" => $filterRentalDate, "filterState" => $filterState, "filter" => ToolsBis::url_safe_encode($filter)));
+    }
+
+    public function filterService() {
+        $filter = [];
+        if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+
+            if (isset($_POST['member']) && !empty($_POST['member'])) {
+                $filter['username'] = $_POST['member'];
+            }
+
+            if (isset($_POST['book']) && !empty($_POST['book'])) {
+                $filter['title'] = $_POST['book'];
+            }
+
+            if (isset($_POST['date']) && !empty($_POST['date'])) {
+                $filter['rentaldate'] = ToolsBis::get_date($_POST['date']);
+            }
+
+            if (isset($_POST['state']) && !empty($_POST['state'])) {
+                $state = $_POST['state'];
+                $filter['state'] = $state;
+            }
+        }
+        $rentals = Rental::getRentalsByFilter($filter);
+
+        echo json_encode(Rental::rentalsToJson($rentals));
+    }
+
+    public function filterServiceResources() {
+        $filter = [];
+        if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+
+            if (isset($_POST['member']) && !empty($_POST['member'])) {
+                $filter['username'] = $_POST['member'];
+            }
+
+            if (isset($_POST['book']) && !empty($_POST['book'])) {
+                $filter['title'] = $_POST['book'];
+            }
+
+            if (isset($_POST['date']) && !empty($_POST['date'])) {
+                $filter['rentaldate'] = ToolsBis::get_date($_POST['date']);
+            }
+
+            if (isset($_POST['state']) && !empty($_POST['state'])) {
+                $state = $_POST['state'];
+                $filter['state'] = $state;
+            }
+        }
+        $rentals = Rental::getRentalsByFilter($filter);
+
+        echo Rental::rentalsResourcesToJson($rentals);
+    }
+
+    public function filterServiceEvents() {
+        $filter = [];
+        if (isset($_POST['member']) || isset($_POST['book']) || isset($_POST['date']) || isset($_POST['sate'])) {
+
+            if (isset($_POST['member']) && !empty($_POST['member'])) {
+                $filter['username'] = $_POST['member'];
+            }
+
+            if (isset($_POST['book']) && !empty($_POST['book'])) {
+                $filter['title'] = $_POST['book'];
+            }
+
+            if (isset($_POST['date']) && !empty($_POST['date'])) {
+                $filter['rentaldate'] = ToolsBis::get_date($_POST['date']);
+            }
+
+            if (isset($_POST['state']) && !empty($_POST['state'])) {
+                $state = $_POST['state'];
+                $filter['state'] = $state;
+            }
+        }
+        $rentals = Rental::getRentalsByFilter($filter);
+
+        echo Rental::rentalsEventsToJson($rentals);
     }
 
     public function deleteRental() {

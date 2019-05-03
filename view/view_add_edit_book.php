@@ -13,6 +13,11 @@
 
             $(function () {
 
+                var btnCancel = $("#cancel");
+                btnCancel.click(e => {
+                    $("#form").off("submit");
+                })
+                
                 var isbn = $("#isbn");
 
                 isbn.on("keyup", function (event) {
@@ -48,17 +53,17 @@
                 $('#form').validate({
                     rules: {
                         isbn: {
-                             remote: {
+                            remote: {
                                 url: 'book/isbn_available_service',
                                 type: 'post',
                                 data: {
                                     username: function () {
                                         return $("#isbn").val();
-                                             
+
                                     },
-                                    id: function(){
-                                         return $("#id").val();
-                                     }   
+                                    id: function () {
+                                        return $("#id").val();
+                                    }
 
                                 }
                             },
@@ -139,10 +144,10 @@
         <div class="title"><?php echo $titlePage ?> book</div>
         <?php include("menu.html"); ?>
         <div class="main">
-            <form id="form" action="" method="post" enctype='multipart/form-data'>
+            <form id="form" action="book/add_edit_book" method="post" enctype='multipart/form-data'>
                 <table>
                     <tr>
-                        <td><input id="id" name="title" type="text" value="<?php echo $title ?>" hidden></td>
+                        <td><input id="id" name="id" type="text" value="<?php echo $id ?>" hidden></td>
                     </tr>
                     <tr>
                         <td>ISBN(*):</td>
@@ -183,8 +188,13 @@
                 <?php if (!$view): ?>
                     <input type="submit" name="save" value="Save">
                 <?php endif; ?>
-                <input type="submit" name="cancel" value="Cancel">
+
+                <input id="cancel" type="submit"  name="cancel" value="Cancel">
+
             </form>
+
+
+
             <?php include('insert_errors.php'); ?>
 
 
