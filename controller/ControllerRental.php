@@ -56,9 +56,9 @@ class ControllerRental extends ControllerBis {
             "checkRent" => $checkRent,
             "bookToJson" => $all_books_to_json));
     }
-    
-    public function basketFilterService(){
-        if(isset($_POST['userSelected']) && isset($_POST['filter'])){
+
+    public function basketFilterService() {
+        if (isset($_POST['userSelected']) && isset($_POST['filter'])) {
             echo Rental::bookToJson(Rental::getBookByFilter($_POST['userSelected'], $_POST['filter']));
         }
     }
@@ -158,7 +158,7 @@ class ControllerRental extends ControllerBis {
         //$rentals_json = json_encode(Rental::rentalsToJson($rentals), 2);
 
 
-        (new View("return"))->show(array("rentals" => $rentals,  "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
+        (new View("return"))->show(array("rentals" => $rentals, "isAdmin" => $isAdmin, "filterUser" => $filterUser, "filterBook" => $filterBook,
             "filterRentalDate" => $filterRentalDate, "filterState" => $filterState, "filter" => ToolsBis::url_safe_encode($filter)));
     }
 
@@ -314,6 +314,19 @@ class ControllerRental extends ControllerBis {
             $filter = $_POST['filter'];
         }
         return $filter;
+    }
+
+    public function deleteRentalService() {
+        if (isset($_POST['id'])) {
+            Rental::delRentalById($_POST['id']);
+            echo true;
+        }
+    }
+
+    public function returnRentalService() {
+        if (isset($_POST['id'])) {
+            Rental::returnRental($_POST['id']);
+        }
     }
 
 }

@@ -236,7 +236,9 @@ class Rental extends Model {
             $id = json_encode($rental->id);
             $book = json_encode($rental->book);
             $user = json_encode($rental->user);
-            $str .= "{\"id\":$id,\"user\":$user,\"book\":$book},";
+            $rentaldate = json_encode($rental->rentaldate);
+            $returndate = json_encode($rental->returndate);
+            $str .= "{\"id\":$id,\"user\":$user,\"book\":$book,\"rentaldate\":$rentaldate,\"returndate\":$returndate},";
         }
         if ($str !== "") {
             $str = substr($str, 0, strlen($str) - 1);

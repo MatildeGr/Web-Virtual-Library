@@ -8,8 +8,8 @@
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script>
-            
-            
+
+
 
             var books = <?= $bookToJson ?>;
             var table;
@@ -17,6 +17,9 @@
 
 
             $(function () {
+                if (<?php $checkRent ?>) {
+                }
+
 
                 $('#formFilter').submit(function () {
                     return false;

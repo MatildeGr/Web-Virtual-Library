@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.min.js" type="text/javascript"></script>
         <link href='fullcalendar-scheduler-4.1.0/packages/core/main.css' rel='stylesheet' />
         <link href='fullcalendar-scheduler-4.1.0/packages/daygrid/main.css' rel='stylesheet' />
         <link href='fullcalendar-scheduler-4.1.0/packages/timegrid/main.css' rel='stylesheet' />
@@ -23,9 +24,19 @@
         <script src='fullcalendar-scheduler-4.1.0/packages/resource-timeline/main.js'></script>
         <script>
 
+            var isAdmin = <?php echo json_encode($isAdmin); ?>;
 
-            
+
+            var calendar;
+
+            function refreshCalendar() {
+                calendar.refetchEvents();
+                calendar.refetchResources();
+            }
+
+
             $(function () {
+
                 //cache le bouton apply filter
                 $("#submit").hide();
 
@@ -37,14 +48,13 @@
 
                 //filtre dynamique
                 $("input").change(function () {
-                    calendar.refetchEvents();
-                    calendar.refetchResources();
+                    refreshCalendar();
                 });
 
                 //fullcalendar timeline
                 var calendarEl = document.getElementById('table');
 
-                var calendar = new FullCalendar.Calendar(calendarEl, {
+                calendar = new FullCalendar.Calendar(calendarEl, {
                     plugins: ['interaction', 'resourceTimeline'],
                     timeZone: 'UTC',
                     defaultView: 'resourceTimelineDay',
@@ -92,18 +102,66 @@
                                 state: $("#state").val()
                             };
                         }
+                    },
+                    eventClick: function (info) {
+                        var res = calendar.getResourceById(info.event.id);
+                        rentalDetails(res.extendedProps, info.event);
+
                     }
                 });
                 $("#table").html(calendar.render());
-
-
             });
+
+
+            function rentalDetails(resources, events) {
+
+                $('#rental_detail_user').text(resources.user);
+                $('#rental_detail_book').text(resources.book);
+                $('#rental_detail_rental_date').text(resources.rentaldate);
+                $('#rental_detail_return_date').text(resources.returndate);
+                $('#confirm_dialog').dialog({
+                    resizable: false,
+                    height: 300,
+                    width: 600,
+                    modal: true,
+                    autoOpen: true,
+                    buttons: {
+                        Return: function () {
+                            $.post("rental/returnRentalService", {id: events.id});
+                            refreshCalendar()
+                            $(this).dialog("close");
+                        },
+
+                        Delete: function () {
+                            $.post("rental/deleteRentalService", {id: events.id});
+                            refreshCalendar()
+
+                            $(this).dialog("close");
+                        },
+
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+
+                });
+                if (!isAdmin) {
+                    $(".ui-dialog-buttonpane button:contains('Delete')").button().hide();
+                }
+
+                if (resources.returndate !== null) {
+                    $(".ui-dialog-buttonpane button:contains('Return')").button().hide();
+                }
+
+
+            }
 
 
 
         </script>
     </head>
     <body>
+
         <div class="title">Return book</div>
         <?php include("menu.html"); ?>
         <div class="main">
@@ -179,6 +237,15 @@
             </div>
 
 
+
+
+        </div>
+
+        <div id="confirm_dialog" title="Rental Details" hidden>
+            <p>User: <b><span id="rental_detail_user"></span></b></p>
+            <p>Book: <b><span id="rental_detail_book"></span></b></p>
+            <p>Rental Date: <b><span id="rental_detail_rental_date"></span></b></p>
+            <p>Return Date: <b><span id="rental_detail_return_date"></span></b></p>
         </div>
     </body>
 </html>

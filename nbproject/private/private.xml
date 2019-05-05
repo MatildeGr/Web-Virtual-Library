@@ -5,8 +5,10 @@
         <group name="PRWB"/>
         <group>
             <file>file:/C:/UwAmp/www/prwb_1819_pa04/view/view_return.php</file>
+            <file>file:/C:/UwAmp/www/prwb_1819_pa04/view/view_add_edit_book.php</file>
             <file>file:/C:/UwAmp/www/prwb_1819_pa04/model/Rental.php</file>
             <file>file:/C:/UwAmp/www/prwb_1819_pa04/controller/ControllerRental.php</file>
+            <file>file:/C:/UwAmp/www/prwb_1819_pa04/view/view_basket.php</file>
         </group>
     </open-files>
 </project-private>
