@@ -17,8 +17,6 @@
 
 
             $(function () {
-                if (<?php $checkRent ?>) {
-                }
 
 
                 $('#formFilter').submit(function () {
