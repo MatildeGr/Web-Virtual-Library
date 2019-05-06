@@ -104,10 +104,9 @@ class Book extends Model {
         $isbn.= ToolsBis::makeCheckDigit($isbn);
         $book = Book::getBookByIsbn($isbn);
         $numberBooked = Rental::numberBookedOrRent($this->id);
-        if ($book) {
-            if (($this->id == null && $book->id !== $this->id) || ($book->isbn == $isbn && $book->id !== $this->id)) {
+        if ($book && (($this->id === null || $this->id == "") || $this->id !== $book->id)) {
                 $errors[] = "This ISBN is already used.";
-            }
+           
         } elseif (empty($isbn)) {
             $errors[] = "ISBN is required.";
         } elseif (!preg_match("#^[0-9-]+$#", $isbn)) {

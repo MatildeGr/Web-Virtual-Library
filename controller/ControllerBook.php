@@ -18,7 +18,7 @@ class ControllerBook extends ControllerBis {
         if (isset($_GET['userselected'])) {
             $userselected = trim($_POST["userselected"]);
         }
-        
+
         if (isset($_GET['param1'])) {
             $id = trim($_GET['param1']);
             $book = Book::get_by_id($id);
@@ -34,8 +34,13 @@ class ControllerBook extends ControllerBis {
             $nbCopies = $book->nbCopies;
             $titlePage = "Edit";
         } else {
+           
             $is_new = true;
             $id = null;
+             if(isset($_POST['id'])){
+                $is_new = false;
+                $id = $_POST['id'];
+            }
             $isbn = '';
             $title = '';
             $author = '';
@@ -118,8 +123,8 @@ class ControllerBook extends ControllerBis {
         }
         (new View("delete_book"))->show(array("user" => $user, "book_del" => $book_del, "errors" => $errors));
     }
-    
-        public function isbn_available_service() {
+
+    public function isbn_available_service() {
         $res = "true";
 
         if (isset($_POST["isbn"]) && $_POST["isbn"] !== "" && isset($_POST["id"])) {

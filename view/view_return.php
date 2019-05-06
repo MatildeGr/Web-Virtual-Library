@@ -8,6 +8,11 @@
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
         <script src="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.min.js" type="text/javascript"></script>
+        <link href="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+        <link href="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.theme.min.css" rel="stylesheet" type="text/css"/>
+        <link href="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.structure.min.css" rel="stylesheet" type="text/css"/>
+        <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="lib/jquery-ui-1.12.1.ui-lightness/jquery-ui.min.js" type="text/javascript"></script>
         <link href='fullcalendar-scheduler-4.1.0/packages/core/main.css' rel='stylesheet' />
         <link href='fullcalendar-scheduler-4.1.0/packages/daygrid/main.css' rel='stylesheet' />
         <link href='fullcalendar-scheduler-4.1.0/packages/timegrid/main.css' rel='stylesheet' />
@@ -55,6 +60,7 @@
                 var calendarEl = document.getElementById('table');
 
                 calendar = new FullCalendar.Calendar(calendarEl, {
+                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                     plugins: ['interaction', 'resourceTimeline'],
                     timeZone: 'UTC',
                     defaultView: 'resourceTimelineDay',
@@ -121,7 +127,7 @@
                 $('#rental_detail_return_date').text(resources.returndate);
                 $('#confirm_dialog').dialog({
                     resizable: false,
-                    height: 300,
+                    height: 350,
                     width: 600,
                     modal: true,
                     autoOpen: true,

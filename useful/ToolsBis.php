@@ -221,6 +221,7 @@ class ToolsBis extends Tools {
     //Fonction qui calcul le check digit d'un isbn 13 et renvoie ce check. 
     public static function makeCheckDigit($isbn) {
         $check = 0;
+        $isbn = str_replace("-", "", $isbn);
         for ($i = 0; $i < 12; $i += 2) {
             $check += substr($isbn, $i, 1);
         }

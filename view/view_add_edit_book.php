@@ -19,7 +19,7 @@
                 })
                 
                 var isbn = $("#isbn");
-
+                isbn.val("");
                 isbn.on("keyup", function (event) {
                     var selection = window.getSelection().toString();
                     if (selection !== '') {
@@ -57,8 +57,8 @@
                                 url: 'book/isbn_available_service',
                                 type: 'post',
                                 data: {
-                                    username: function () {
-                                        return $("#isbn").val();
+                                    isbn: function () {
+                                        return $("#isbn").val() + $("#checkdigit").val();
 
                                     },
                                     id: function () {
@@ -87,6 +87,7 @@
                     },
                     messages: {
                         isbn: {
+                            remote: 'this ISBN is already used',
                             required: 'required',
                             minlength: 'minimum 12 characters',
                             maxlength: 'maximum 12 characters'
@@ -115,21 +116,22 @@
             function checkDigit(data) {
 
                 var isbn = data.replace(/[($)\s\._\-]+/g, '');
+                var check = 0;
                 if (isbn.length === 12) {
-                    var check = 0;
+                    
                     for (var i = 0; i < 12; i += 2) {
-                        check += isbn.substr(i, 1);
+                        check += parseInt(isbn.substr(i, 1));
+                        
                     }
 
                     for (var i = 1; i < 12; i += 2) {
-                        check += 3 * isbn.substr(i, 1);
+                        check += 3 * parseInt(isbn.substr(i, 1));
                     }
 
                     check = 10 - check % 10;
                     if (check === 10) {
                         check = 0;
                     }
-
                     return check;
                 }
 
