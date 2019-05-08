@@ -328,5 +328,15 @@ class ControllerRental extends ControllerBis {
             Rental::returnRental($_POST['id']);
         }
     }
+    
+    public function checkBookAvalaibleService(){
+        $res = "false";
+        if(isset($_POST['id'])){
+           if(Rental::checkBookAvalaible($_POST['id'])){
+               $res = "true";
+           } 
+        }
+        echo $res;
+    }
 
 }

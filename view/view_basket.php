@@ -11,6 +11,7 @@
 
 
 
+            var isAdmin = <?php echo json_encode($user->is_admin()); ?>;
             var books = <?= $bookToJson ?>;
             var table;
 
@@ -52,6 +53,22 @@
 
             }
 
+
+            function checkBookAvalaible(id) {
+                var res;
+                $.post("rental/checkBookAvalaibleService", {id: id}, function (data) {
+
+                    if (data === "true")
+                        res = json_encode(true);
+                    else
+                        res = json_encode(false);
+                });
+                
+                return res;
+            }
+
+
+
             function displayTable() {
                 var html = html += "<thead>";
                 html += "<tr>";
@@ -60,6 +77,7 @@
                 html += "<th>Author</th>";
                 html += "<th>Editor</th>";
                 html += "<th>Nb Copies</th>";
+                html += "<th>Action</th>";
                 html += "</tr>";
                 html += "</thead>";
                 for (var b of books) {
@@ -69,6 +87,41 @@
                     html += "<td>" + b.author + "</td>";
                     html += "<td>" + b.editor + "</td>";
                     html += "<td>" + b.copies + "</td>";
+
+
+                    //edit + delete reste à ajouter le controle de visibilité si role == admin
+                    html += "<td>"
+
+                    if (isAdmin) {
+                        html += "<form class='button' action='book/add_edit_book' method='get'>";
+                        html += "<input type='image' value='Edit' src='logo/pen.png'>";
+                        html += "</form>";
+
+                        html += "<form class='button' action='book/delete_book' method='get'>";
+                        html += "<input type='image'  src='logo/garbage.png'>";
+                        html += "</form>";
+                    }
+
+                    if (!isAdmin) {
+                        html += "<form class='button' action='book/add_edit_book' method='GET'>";
+                        html += "<input type='image'  src='logo/eyes.png'>";
+                        html += "</form>";
+                    }
+
+
+                    var checkRent = <?php echo json_encode($checkRent); ?>;
+
+
+                    if (checkRent && checkBookAvalaible(b.id) == "true") {
+                        html += "<form class='button' action='rental/add_basket/' method='POST'>";
+                        html += "<input type=hidden name='bookid' value=' '>";
+                        html += "<input type=hidden name='userselected' value=' '>";
+                        html += "<input type='hidden' name='filter' value=' ' >";
+                        html += "<input id ='rent' type='image' src='logo/arrow_bottom.png'>";
+                        html += "</form>";
+                    }
+
+                    html += "</td>";
                     html += "</tr>";
                 }
                 table.html(html);

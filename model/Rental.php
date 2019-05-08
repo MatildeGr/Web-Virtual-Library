@@ -125,13 +125,14 @@ class Rental extends Model {
         $str = "";
 
         foreach ($books as $book) {
+            $id = json_encode($book->id);
             $isbn = json_encode($book->isbn);
             $title = json_encode($book->title);
             $author = json_encode($book->author);
             $editor = json_encode($book->editor);
             $copies = json_encode($book->nbCopies);
 
-            $str .= "{\"isbn\":$isbn,\"title\":$title,\"author\":$author,\"editor\":$editor,\"copies\":$copies},";
+            $str .= "{\"id\":$id,\"isbn\":$isbn,\"title\":$title,\"author\":$author,\"editor\":$editor,\"copies\":$copies},";
         }
         if ($str !== "") {
 
