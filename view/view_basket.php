@@ -7,19 +7,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/styles.css" rel="stylesheet" type="text/css"/>
         <script src="lib/jquery-3.3.1.min.js" type="text/javascript"></script>
+        <script src="lib/url-tools-bundle.min.js"></script>
         <script>
-
 
 
             var isAdmin = <?php echo json_encode($user->is_admin()); ?>;
             var books = <?= $bookToJson ?>;
             var table;
+            var userSelected;
+           
 
 
 
             $(function () {
 
 
+                userSelected = $("#user").val();
+                
                 $('#formFilter').submit(function () {
                     return false;
                 });
@@ -35,7 +39,7 @@
 
 
                 $("#filter").change(function () {
-
+                    
                     applyChange();
 
                 });
@@ -93,30 +97,32 @@
                     html += "<td>"
 
                     if (isAdmin) {
-                        html += "<form class='button' action='book/add_edit_book' method='get'>";
+                        html += "<form class='button' action='book/add_edit_book/"+ b.id +"' method='get'>";
                         html += "<input type='image' value='Edit' src='logo/pen.png'>";
                         html += "</form>";
 
-                        html += "<form class='button' action='book/delete_book' method='get'>";
+                        html += "<form class='button' action='book/delete_book/"+ b.id +"' method='get'>";
                         html += "<input type='image'  src='logo/garbage.png'>";
                         html += "</form>";
                     }
 
                     if (!isAdmin) {
-                        html += "<form class='button' action='book/add_edit_book' method='GET'>";
+                        html += "<form class='button' action='book/add_edit_book/"+ b.id +"' method='GET'>";
                         html += "<input type='image'  src='logo/eyes.png'>";
                         html += "</form>";
                     }
 
 
                     var checkRent = <?php echo json_encode($checkRent); ?>;
+                    //filter = url_safe_encode({ filter: $("#filter").val() });
 
 
-                    if (checkRent && checkBookAvalaible(b.id) == "true") {
+
+                    if (checkRent) {
                         html += "<form class='button' action='rental/add_basket/' method='POST'>";
-                        html += "<input type=hidden name='bookid' value=' '>";
-                        html += "<input type=hidden name='userselected' value=' '>";
-                        html += "<input type='hidden' name='filter' value=' ' >";
+                        html += "<input type=hidden name='bookid' value="+ b.id +">";
+                        html += "<input type=hidden name='userselected' value="+ userSelected +">";
+                        html += "<input type='hidden' name='filter' value="+ url_safe_encode("#filter") + " >"
                         html += "<input id ='rent' type='image' src='logo/arrow_bottom.png'>";
                         html += "</form>";
                     }
