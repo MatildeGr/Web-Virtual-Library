@@ -92,7 +92,7 @@
                                 member: $("#member").val(),
                                 book: $("#book").val(),
                                 date: $("#date").val(),
-                                state: $("#state").val()
+                                state: $("input[name='state']:checked").val()
                             };
                         }
                     },
@@ -191,7 +191,7 @@
                             <tr>
                                 <td>State:</td>
                                 <td>
-                                    <input type="radio" name="state" value="open" id="open" <?= $filterState == "open" ? "checked = 'checked'" : "" ?>/><label for="Open">Open</label>
+                                    <input type="radio"  name="state" value="open" id="open" <?= $filterState == "open" ? "checked = 'checked'" : "" ?>/><label for="Open">Open</label>
                                     <input type="radio" name="state" value="returned" id="returned"  <?= $filterState == "returned" ? "checked = 'checked'" : "" ?>/><label for="Returned">Returned</label>
                                     <input type="radio" name="state" value="all" id="all" <?= $filterState == "all" ? "checked = 'checked'" : "" ?>/><label for="all">All</label>
                                 </td>

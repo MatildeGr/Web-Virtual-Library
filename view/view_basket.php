@@ -15,15 +15,14 @@
             var books = <?= $bookToJson ?>;
             var table;
             var userSelected;
-           
+
 
 
 
             $(function () {
 
-
                 userSelected = $("#user").val();
-                
+
                 $('#formFilter').submit(function () {
                     return false;
                 });
@@ -39,7 +38,7 @@
 
 
                 $("#filter").change(function () {
-                    
+                    setChangeFilter();
                     applyChange();
 
                 });
@@ -57,18 +56,13 @@
 
             }
 
-
-            function checkBookAvalaible(id) {
-                var res;
+            function checkBookAvalaible(id, fct) {
                 $.post("rental/checkBookAvalaibleService", {id: id}, function (data) {
-
                     if (data === "true")
-                        res = json_encode(true);
-                    else
-                        res = json_encode(false);
+                        fct();
                 });
-                
-                return res;
+
+                //return JSON.parse(data);
             }
 
 
@@ -97,17 +91,17 @@
                     html += "<td>"
 
                     if (isAdmin) {
-                        html += "<form class='button' action='book/add_edit_book/"+ b.id +"' method='get'>";
+                        html += "<form class='button' action='book/add_edit_book/" + b.id + "' method='get'>";
                         html += "<input type='image' value='Edit' src='logo/pen.png'>";
                         html += "</form>";
 
-                        html += "<form class='button' action='book/delete_book/"+ b.id +"' method='get'>";
+                        html += "<form class='button' action='book/delete_book/" + b.id + "' method='get'>";
                         html += "<input type='image'  src='logo/garbage.png'>";
                         html += "</form>";
                     }
 
                     if (!isAdmin) {
-                        html += "<form class='button' action='book/add_edit_book/"+ b.id +"' method='GET'>";
+                        html += "<form class='button' action='book/add_edit_book/" + b.id + "' method='GET'>";
                         html += "<input type='image'  src='logo/eyes.png'>";
                         html += "</form>";
                     }
@@ -116,13 +110,12 @@
                     var checkRent = <?php echo json_encode($checkRent); ?>;
                     //filter = url_safe_encode({ filter: $("#filter").val() });
 
-
-
                     if (checkRent) {
-                        html += "<form class='button' action='rental/add_basket/' method='POST'>";
-                        html += "<input type=hidden name='bookid' value="+ b.id +">";
-                        html += "<input type=hidden name='userselected' value="+ userSelected +">";
-                        html += "<input type='hidden' name='filter' value="+ url_safe_encode("#filter") + " >"
+                        html += "<form id='frm_" + b.id  + "' class='button' action='rental/add_basket/' method='POST'>";
+                        html += "<input type=hidden name='bookid' value=" + b.id + ">";
+                        html += "<input type=hidden name='userselected' value=" + userSelected + ">";
+                        html += "<input type='hidden' name='filter' value='" + $("#filter").val() + "' >";
+                        console.log($("#filter").val());
                         html += "<input id ='rent' type='image' src='logo/arrow_bottom.png'>";
                         html += "</form>";
                     }
@@ -131,6 +124,13 @@
                     html += "</tr>";
                 }
                 table.html(html);
+            }
+
+            function setChangeFilter() {
+                $("#filterDelete").val($("#filter").val());
+                $("#filterConfirm").val($("#filter").val());
+                $("#filterClear").val($("#filter").val());
+
             }
 
 
@@ -250,7 +250,7 @@
                                     <form class="button" action="rental/delete_basket/" method="POST">
                                         <input type=hidden name="userselected" value="<?= $userselected ?>">
                                         <input type="hidden" name='bookid' value="<?= $b->id ?>" >
-                                        <input type="hidden" name="filter" value="<?= $filter ?>">
+                                        <input type="hidden" id="filterDelete" name="filter" value="<?= $filter ?>">
                                         <input id="backrent" type="image" value="" src='logo/arrow_top.png'>
                                     </form></td>
                             </tr>
@@ -270,12 +270,12 @@
                     </form>
                 <?php endif; ?>
                 <form class="button" action="Rental/confirm_basket" method="POST">
-                    <input type="hidden" name="userselected" value="<?= $userselected ?>">
+                    <input type="hidden" id="filterConfirm" name="userselected" value="<?= $userselected ?>">
                     <input type="hidden" name="filter" value="<?= $filter ?>">
                     <input type="submit" value="Confirm basket">
                 </form>
                 <form class='button' action='Rental/clear_basket' method='POST'>
-                    <input type="hidden" name="filter" value="<?= $filter ?>">
+                    <input type="hidden" id="filterClear" name="filter" value="<?= $filter ?>">
                     <input type="hidden" name="userselected" value="<?= $userselected ?>">
                     <input type="submit" value="Clear Basket">
                 </form>
