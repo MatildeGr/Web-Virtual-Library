@@ -19,7 +19,10 @@
                 })
                 
                 var isbn = $("#isbn");
-                isbn.val("");
+                var isNew = <?= json_encode($is_new) ?>;
+                if(isNew){isbn.val("");}
+                    
+                
                 isbn.on("keyup", function (event) {
                     var selection = window.getSelection().toString();
                     if (selection !== '') {

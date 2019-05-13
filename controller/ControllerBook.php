@@ -92,7 +92,7 @@ class ControllerBook extends ControllerBis {
         }
         (new View("add_edit_book"))->show(array("id" => $id, "isbn" => $isbn, "title" => $title,
             "author" => $author, "editor" => $editor, "picture" => $picture_path, "nbCopies" => $nbCopies,
-            "errors" => $errors, "view" => $view, "titlePage" => $titlePage, "is_admin" => $is_admin));
+            "errors" => $errors, "view" => $view, "titlePage" => $titlePage, "is_admin" => $is_admin, "is_new" => $is_new));
     }
 
     public function delete_book() {

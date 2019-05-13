@@ -68,6 +68,7 @@
 
 
             function displayTable() {
+                console.log(books);
                 var html = html += "<thead>";
                 html += "<tr>";
                 html += "<th>ISBN</th>";
@@ -108,9 +109,7 @@
 
 
                     var checkRent = <?php echo json_encode($checkRent); ?>;
-                    //filter = url_safe_encode({ filter: $("#filter").val() });
-
-                    if (checkRent) {
+                    if (checkRent && b.isAvalaible) {
                         html += "<form id='frm_" + b.id  + "' class='button' action='rental/add_basket/' method='POST'>";
                         html += "<input type=hidden name='bookid' value=" + b.id + ">";
                         html += "<input type=hidden name='userselected' value=" + userSelected + ">";

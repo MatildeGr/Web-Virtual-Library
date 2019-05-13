@@ -131,8 +131,10 @@ class Rental extends Model {
             $author = json_encode($book->author);
             $editor = json_encode($book->editor);
             $copies = json_encode($book->nbCopies);
+            $isAvalaible = json_encode(Rental::checkBookAvalaible($book->id));
 
-            $str .= "{\"id\":$id,\"isbn\":$isbn,\"title\":$title,\"author\":$author,\"editor\":$editor,\"copies\":$copies},";
+
+            $str .= "{\"id\":$id,\"isbn\":$isbn,\"title\":$title,\"author\":$author,\"editor\":$editor,\"copies\":$copies,\"isAvalaible\":$isAvalaible},";
         }
         if ($str !== "") {
 
@@ -229,8 +231,6 @@ class Rental extends Model {
         return $book->nbCopies - $numberBooked != 0;
     }
 
-    
-
     public static function rentalsResourcesToJson($rentals) {
         $str = "";
         foreach ($rentals as $rental) {
@@ -239,6 +239,7 @@ class Rental extends Model {
             $user = json_encode($rental->user);
             $rentaldate = json_encode($rental->rentaldate);
             $returndate = json_encode($rental->returndate);
+
             $str .= "{\"id\":$id,\"user\":$user,\"book\":$book,\"rentaldate\":$rentaldate,\"returndate\":$returndate},";
         }
         if ($str !== "") {
