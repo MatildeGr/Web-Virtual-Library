@@ -37,7 +37,7 @@
                 });
 
 
-                $("#filter").change(function () {
+                $("#filter").on('input',function () {
                     setChangeFilter();
                     applyChange();
 
@@ -68,7 +68,6 @@
 
 
             function displayTable() {
-                console.log(books);
                 var html = html += "<thead>";
                 html += "<tr>";
                 html += "<th>ISBN</th>";
@@ -114,7 +113,6 @@
                         html += "<input type=hidden name='bookid' value=" + b.id + ">";
                         html += "<input type=hidden name='userselected' value=" + userSelected + ">";
                         html += "<input type='hidden' name='filter' value='" + $("#filter").val() + "' >";
-                        console.log($("#filter").val());
                         html += "<input id ='rent' type='image' src='logo/arrow_bottom.png'>";
                         html += "</form>";
                     }

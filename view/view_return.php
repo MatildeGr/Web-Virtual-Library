@@ -52,7 +52,7 @@
 
 
                 //filtre dynamique
-                $("input").change(function () {
+                $("input").on('input',function () {
                     refreshCalendar();
                 });
 
