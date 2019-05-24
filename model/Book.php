@@ -117,7 +117,7 @@ class Book extends Model {
         if ($this->nbCopies < $numberBooked) {
             $errors[] = "Copies must remain greater than or equal to the number of copies currently reserved or rented which is $numberBooked ";
         }
-        if ($this->nbCopies < 1) {
+        if ($numberBooked!=0 && $this->nbCopies < 1) {
             $errors[] = "Copies cannot be a negative number or 0.";
         }
         if (empty($this->title)) {

@@ -103,12 +103,10 @@ class Rental extends Model {
     public static function getBookByFilter($userselected, $filter) {
         if (empty($filter)) {
             $query = self::execute("SELECT id from book where id not in(select book from rental"
-                            . " where user=:user and rentaldate is null)"
-                            . " and nbCopies>0 ", array("user" => $userselected));
+                            . " where user=:user and rentaldate is null)", array("user" => $userselected));
         } else {
             $query = self::execute("SELECT id from book where id not in(select book from rental"
                             . " where user=:user and rentaldate is null)"
-                            . " and nbCopies>0 "
                             . "AND (title LIKE '%$filter%' or author LIKE '%$filter%' or editor LIKE '%$filter%'"
                             . " or isbn LIKE '%$filter%') ", array("user" => $userselected));
         }
